@@ -1,8 +1,14 @@
-import User from '../models/User.js';
+export function login(req, res)
+{
+    
+}
 
-export const loginUser = async (req, res) => {
+export function register(req, res)
+{
+    
+}
 
-};
-
-export const registerUser = async (req, res) => {
-};
+export function verifyEmail(req, res)
+{
+    
+}

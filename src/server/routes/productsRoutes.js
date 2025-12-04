@@ -1,23 +1,13 @@
-import express from 'express';  
+import express from 'express';
+import { isAuth, isAdmin } from '../middlewares/authMiddleware.js';
+import { getAllProducts, getProductById, createProduct, updateProduct, deleteProduct } from '../controllers/productsController.js';
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-    
-});
+router.get('/', getAllProducts);
+router.get('/:id', getProductById);
+router.post('/', isAuth, isAdmin, createProduct);
+router.put('/:id', isAuth, isAdmin, updateProduct);
+router.delete('/:id', isAuth, isAdmin, deleteProduct);
 
-router.get('/:id', (req, res) => {
-    
-});
-
-router.post('/', (req, res) => {
-    
-});
-  
-router.put('/:id', (req, res) => {
-    
-}); 
-
-router.delete('/:id', (req, res) => {
-    
-});
+export default router;

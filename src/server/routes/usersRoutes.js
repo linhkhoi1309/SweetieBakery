@@ -1,22 +1,13 @@
 import express from 'express';
+import { isAuth, isAdmin } from '../middlewares/authMiddleware.js';
+import { getUserProfile, updateUserProfile, getAllUsers, deleteUserById } from '../controllers/usersController.js';
 
 const router = express.Router();
 
-router.get('/profile', (req, res) => {
-    
-});
-
-router.put('/profile', (req, res) => {
-    
-});
-
-router.get('/', (req, res) => {
-    
-});
-
-router.delete('/:id', (req, res) => {
-    
-});
+router.get('/profile', isAuth, getUserProfile);
+router.put('/profile', isAuth, updateUserProfile);
+router.get('/', isAuth, isAdmin, getAllUsers);
+router.delete('/:id', isAuth, isAdmin, deleteUserById);
 
 
 export default router;
