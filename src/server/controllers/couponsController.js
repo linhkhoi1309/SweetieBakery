@@ -1,6 +1,5 @@
 import Coupon from '../models/Coupon.js';
 
-// 6.1. Kiểm tra & Áp dụng mã giảm giá
 // Endpoint: POST /coupons/apply
 export const applyCoupon = async (req, res) => {
     try {
