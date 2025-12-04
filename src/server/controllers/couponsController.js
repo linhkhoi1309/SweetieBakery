@@ -1,64 +1,60 @@
 import Coupon from '../models/Coupon.js';
 
-//Kiểm tra & Áp dụng mã giảm giá
+// 6.1. Kiểm tra & Áp dụng mã giảm giá
+// Endpoint: POST /coupons/apply
 export const applyCoupon = async (req, res) => {
     try {
-        const { code, cartTotal } = req.body;
+        const { code, orderValue } = req.body;
 
-        //Validate Input
-        if (!code || !cartTotal) {
-        return res.status(400).json({ 
-            success: false, 
-            message: 'Vui lòng cung cấp mã giảm giá và tổng tiền đơn hàng.' 
-        });
+        if (!orderValue) {
+        return res.status(400).json({ success: false, message: 'Cần cung cấp giá trị đơn hàng để tính toán.' });
         }
 
         // Tìm mã trong DB
         const coupon = await Coupon.findOne({ code: code.toUpperCase() });
 
-        // Kiểm tra hợp lệ
+        // Kiểm tra tồn tại
         if (!coupon) {
         return res.status(404).json({ success: false, message: 'Mã giảm giá không tồn tại.' });
         }
 
+        // Kiểm tra hợp lệ
         if (!coupon.isActive) {
-        return res.status(400).json({ success: false, message: 'Mã giảm giá đã bị khóa.' });
+        return res.status(400).json({ success: false, message: 'Mã giảm giá đang bị khóa.' });
         }
 
         if (new Date() > coupon.expirationDate) {
         return res.status(400).json({ success: false, message: 'Mã giảm giá đã hết hạn.' });
         }
 
-        if (cartTotal < coupon.minPurchase) {
-        return res.status(400).json({ 
-            success: false, 
-            message: `Đơn hàng phải từ ${coupon.minPurchase.toLocaleString('vi-VN')}đ để sử dụng mã này.` 
-        });
-        }
-        
-        if (coupon.usageLimit > 0 && coupon.usedCount >= coupon.usageLimit) {
-            return res.status(400).json({ success: false, message: 'Mã giảm giá đã hết lượt sử dụng.' });
+        if (coupon.usedCount >= coupon.maxUsage) {
+        return res.status(400).json({ success: false, message: 'Mã giảm giá đã hết lượt sử dụng.' });
         }
 
-        // Tính toán số tiền giảm
+        // Kiểm tra giá trị đơn tối thiểu
+        if (orderValue < coupon.minOrderValue) {
+        return res.status(400).json({ 
+            success: false, 
+            message: `Đơn hàng phải từ ${coupon.minOrderValue.toLocaleString('vi-VN')}đ mới được dùng mã này.` 
+        });
+        }
+
         let discountAmount = 0;
 
         if (coupon.discountType === 'percent') {
-        discountAmount = (cartTotal * coupon.discountAmount) / 100;
-        
+        discountAmount = (orderValue * coupon.discountValue) / 100;
         } else {
-        // Giảm cố định 
-        discountAmount = coupon.discountAmount;
+        discountAmount = coupon.discountValue;
         }
 
-        // Đảm bảo tiền giảm không lớn hơn tổng đơn hàng
-        if (discountAmount > cartTotal) {
-        discountAmount = cartTotal;
+        // Đảm bảo không giảm quá số tiền đơn hàng
+        if (discountAmount > orderValue) {
+        discountAmount = orderValue;
         }
 
-        const newTotal = cartTotal - discountAmount;
+        const newTotal = orderValue - discountAmount;
 
-        //Trả về kết quả
+        // Trả về kết quả
         res.status(200).json({
         success: true,
         discountAmount: discountAmount,
@@ -69,16 +65,14 @@ export const applyCoupon = async (req, res) => {
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
-};
+    };
 
-
-// POST /coupons
-export const createCoupon = async (req, res) => {
+// Endpoint: POST /coupons
+    export const createCoupon = async (req, res) => {
     try {
-        const newCoupon = new Coupon(req.body);
-        const savedCoupon = await newCoupon.save();
-        res.status(201).json(savedCoupon);
+        const newCoupon = await Coupon.create(req.body);
+        res.status(201).json(newCoupon);
     } catch (error) {
-        res.status(500).json(error);
+        res.status(500).json({ message: error.message });
     }
 };
