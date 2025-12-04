@@ -19,12 +19,14 @@ import usersRoutes from './routes/usersRoutes.js';
 import productsRoutes from './routes/productsRoutes.js';
 import ordersRoutes from './routes/ordersRoutes.js';
 import categoriesRoutes from './routes/categoriesRoutes.js';
+import couponsRoutes from './routes/couponRoutes.js';
 
 app.use('/auth', authRoutes);
 app.use('/users', usersRoutes);
 app.use('/orders', ordersRoutes);
 app.use('/products', productsRoutes);
 app.use('/categories', categoriesRoutes);
+app.use('/coupons', couponRoutes);
 
 app.listen(PORT, () => {
   connectDB();
