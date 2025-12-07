@@ -5,7 +5,7 @@ import cloudinary from '../config/cloudinary.js';
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'my_shop_products',
+    folder: 'sweetie-bakery-products',
     allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
     // transformation: [{ width: 500, height: 500, crop: 'limit' }],
   },
