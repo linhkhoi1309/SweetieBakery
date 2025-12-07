@@ -8,7 +8,7 @@ import {
     deleteProduct 
 } from '../controllers/productsController.js';
 
-import { createReview, getProductReviews } from '../controllers/reviewController.js'; 
+import { createReview, getProductReviews } from '../controllers/reviewsController.js'; 
 
 const router = express.Router();
 

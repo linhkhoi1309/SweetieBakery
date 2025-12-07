@@ -1,0 +1,49 @@
+### Get all categories
+GET http://localhost:5000/categories
+Accept: application/json
+
+### Create a new category
+POST http://localhost:5000/categories
+Content-Type: application/json
+
+{
+  "name": "Bánh ngọt",
+  "image": "http://example.com/images/banhngot.jpg"
+} 
+
+### Delete a category by ID
+DELETE http://localhost:5000/categories/6935379a25d81cbff3156c6d
+Accept: application/json
+
+### Get all products
+GET http://localhost:5000/products
+Accept: application/json
+
+### Create a new product
+POST http://localhost:5000/products
+Content-Type: application/json
+
+{
+  "name": "Bánh kem socola",
+  "description": "Bánh kem socola thơm ngon, mềm mịn.",
+  "price": 250000,
+  "category": "693538a033982cd7d751c39f",
+  "images": [{
+    "url": "http://example.com/images/banhkem.jpg",
+    "public_id": "banhkem123"
+  }],
+  "stock": 20
+}
+
+### Update a product by ID
+PUT http://localhost:5000/products/69353cd6432c6aa83d4e3fc6
+Content-Type: application/json
+
+{
+  "price": 230000,
+  "stock": 25
+}
+
+### Delete a product by ID
+DELETE http://localhost:5000/products/69353cd6432c6aa83d4e3fc6
+Accept: application/json

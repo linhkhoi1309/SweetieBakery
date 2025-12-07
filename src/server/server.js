@@ -19,7 +19,7 @@ import usersRoutes from './routes/usersRoutes.js';
 import productsRoutes from './routes/productsRoutes.js';
 import ordersRoutes from './routes/ordersRoutes.js';
 import categoriesRoutes from './routes/categoriesRoutes.js';
-import couponsRoutes from './routes/couponRoutes.js';
+import couponsRoutes from './routes/couponsRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 
 app.use('/auth', authRoutes);
