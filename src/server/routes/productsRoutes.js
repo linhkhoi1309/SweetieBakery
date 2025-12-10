@@ -12,6 +12,7 @@ import { createReview, getProductReviews } from '../controllers/reviewsControlle
 
 const router = express.Router();
 
+// --- Product Routes ---
 router.get('/', getAllProducts);
 router.get('/:id', getProductById);
 router.post('/', isAuth, isAdmin, createProduct);
@@ -20,7 +21,6 @@ router.delete('/:id', isAuth, isAdmin, deleteProduct);
 
 
 router.get('/:id/reviews', getProductReviews);
-
 router.post('/:id/reviews', isAuth, createReview);
 
 export default router;

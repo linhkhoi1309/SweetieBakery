@@ -1,13 +1,9 @@
 import express from 'express';
-import { isAuth, isAdmin } from '../middlewares/authMiddleware.js';
-import { getUserProfile, updateUserProfile, getAllUsers, deleteUserById } from '../controllers/usersController.js';
+import { uploadImage } from '../controllers/uploadController.js';
+import uploadMiddleware from '../middlewares/uploadMiddleware.js'; 
 
 const router = express.Router();
 
-router.get('/profile', isAuth, getUserProfile);
-router.put('/profile', isAuth, updateUserProfile);
-router.get('/', isAuth, isAdmin, getAllUsers);
-router.delete('/:id', isAuth, isAdmin, deleteUserById);
-
+router.post('/', uploadMiddleware.single('image'), uploadImage);
 
 export default router;

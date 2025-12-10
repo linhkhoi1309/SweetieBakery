@@ -21,6 +21,7 @@ import ordersRoutes from './routes/ordersRoutes.js';
 import categoriesRoutes from './routes/categoriesRoutes.js';
 import couponsRoutes from './routes/couponsRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
+import reviewsRoutes from './routes/reviewsRoutes.js';
 
 app.use('/auth', authRoutes);
 app.use('/users', usersRoutes);
@@ -29,6 +30,7 @@ app.use('/products', productsRoutes);
 app.use('/categories', categoriesRoutes);
 app.use('/coupons', couponsRoutes);
 app.use('/upload', uploadRoutes);
+app.use('/reviews', reviewsRoutes);
 
 app.listen(PORT, () => {
   connectDB();

@@ -1,3 +1,24 @@
+### ----------------------------------------------
+### 4. 🔐 Auth Module
+### ----------------------------------------------
+POST http://localhost:5000/auth/register
+Content-Type: application/json
+
+{
+  "username": "admin_real",
+  "name": "Admin Xịn",
+  "email": "admin@gmail.com",
+  "password": "123456",
+  "phone": "0909000111"
+}
+### Đăng nhập (Login)
+POST http://localhost:5000/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@gmail.com",
+  "password": "123456"
+}
 ### Get all categories
 GET http://localhost:5000/categories
 Accept: application/json
@@ -22,6 +43,7 @@ Accept: application/json
 ### Create a new product
 POST http://localhost:5000/products
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MzhlZWQ4YmMyY2RmMjA2NGNjZjkwYiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2NTMzOTUyNSwiZXhwIjoxNzY3OTMxNTI1fQ.tTpwL-0jIPae4OU0M6B4mHrIOEtyRjEjFn5WgvYyoLY
 
 {
   "name": "Bánh kem socola",
@@ -47,3 +69,59 @@ Content-Type: application/json
 ### Delete a product by ID
 DELETE http://localhost:5000/products/69353cd6432c6aa83d4e3fc6
 Accept: application/json
+
+
+### 5.1. Tạo đánh giá cho sản phẩm
+POST http://localhost:5000/products/69353e22b46614ec1f6de822/reviews
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MzhlZWQ4YmMyY2RmMjA2NGNjZjkwYiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2NTM2NzMwNSwiZXhwIjoxNzY3OTU5MzA1fQ.mqhsBspR5-16MvaVGeYjbOu6-gMnerOknQTiFMd4mn4
+
+{
+  "rating": 5,
+  "comment": "Bánh rất ngon, giao hàng nhanh, đóng gói cẩn thận!"
+}
+
+### 5.2. Lấy danh sách đánh giá của sản phẩm
+GET http://localhost:5000/products/69353e22b46614ec1f6de822/reviews
+Accept: application/json
+### 5.3. Lấy danh sách đánh giá pending
+GET http://localhost:5000/reviews?status=pending 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MzhlZWQ4YmMyY2RmMjA2NGNjZjkwYiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2NTM2NzMwNSwiZXhwIjoxNzY3OTU5MzA1fQ.mqhsBspR5-16MvaVGeYjbOu6-gMnerOknQTiFMd4mn4
+### 5.4. Duyệt đánh giá
+PUT http://localhost:5000/reviews/69395f757694db2449ae038d/status
+Content-Type: application/json 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MzhlZWQ4YmMyY2RmMjA2NGNjZjkwYiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2NTM2NzMwNSwiZXhwIjoxNzY3OTU5MzA1fQ.mqhsBspR5-16MvaVGeYjbOu6-gMnerOknQTiFMd4mn4
+
+{ 
+  "status": "approved" 
+}
+### 5.5. Reply đánh giá
+PUT http://localhost:5000/reviews/69395f757694db2449ae038d/reply 
+Content-Type: application/json 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MzhlZWQ4YmMyY2RmMjA2NGNjZjkwYiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2NTM2NzMwNSwiZXhwIjoxNzY3OTU5MzA1fQ.mqhsBspR5-16MvaVGeYjbOu6-gMnerOknQTiFMd4mn4
+
+{ 
+  "reply": "Cảm ơn bạn đã ủng hộ Sweetie Bakery! Shop xin gửi tặng bạn voucher giảm 10% cho đơn sau ạ." 
+}
+### 6.1. Kiểm tra/Áp dụng mã giảm giá
+POST http://localhost:5000/coupons/apply
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MzhlZWQ4YmMyY2RmMjA2NGNjZjkwYiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2NTMzOTUyNSwiZXhwIjoxNzY3OTMxNTI1fQ.tTpwL-0jIPae4OU0M6B4mHrIOEtyRjEjFn5WgvYyoLY
+
+{
+  "code": "SALE50"
+}
+
+
+
+### 7.1. Upload ảnh
+POST http://localhost:5000/upload
+Content-Type: multipart/form-data; boundary=MyBoundary
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MzhlZWQ4YmMyY2RmMjA2NGNjZjkwYiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2NTM0MDQzOCwiZXhwIjoxNzY3OTMyNDM4fQ.0FZGs-xjknviUPzv3hammOLeO32D-cvsUbkd_QOVSYo
+
+--MyBoundary
+Content-Disposition: form-data; name="image"; filename="R.jpg"
+Content-Type: image/jpeg
+
+< ./R.jpg
+--MyBoundary--

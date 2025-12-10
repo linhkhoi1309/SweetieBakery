@@ -7,8 +7,8 @@ const storage = new CloudinaryStorage({
   params: {
     folder: 'sweetie-bakery-products',
     allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
-    // transformation: [{ width: 500, height: 500, crop: 'limit' }],
   },
 });
 
-export const upload = multer({ storage: storage });
+const upload = multer({ storage: storage });
+export default upload;
