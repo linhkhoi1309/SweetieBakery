@@ -1,27 +1,35 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
 
 const userSchema = new mongoose.Schema({
-	username: {
+  username: {
     type: String,
     required: [true, 'Vui lòng nhập username'],
-    unique: true, 
-    trim: true
+    unique: true,
+    trim: true,
+    minlength: [3, 'Username phải có ít nhất 3 ký tự'],
+    maxlength: [20, 'Username không được quá 20 ký tự'],
+    match: [/^[a-zA-Z0-9_]+$/, 'Username chỉ được chứa chữ cái, số và dấu gạch dưới'],
   },
   name: {
     type: String,
-    required: true,
+    required: [true, 'Vui lòng nhập tên người dùng'],
     trim: true,
   },
   email: {
     type: String,
-    required: true,
+    required: [true, 'Vui lòng nhập email'],
     unique: true,
+    match: [
+      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+      'Email không hợp lệ',
+    ],
   },
   password: {
     type: String,
-    required: true,
+    required: [true, 'Vui lòng nhập mật khẩu'],
     minlength: 6,
-    select: false, // Không trả về password khi query bình thường (Security)
+    select: false, // Ẩn mật khẩu khi query
   },
   phone: {
     type: String,
@@ -33,7 +41,7 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['user', 'admin'],
+    enum: ['guest', 'user', 'admin'],
     default: 'user',
   },
   avatar: {
@@ -42,7 +50,7 @@ const userSchema = new mongoose.Schema({
   },
   isActive: {
     type: Boolean,
-    default: true, 
+    default: true,
   },
   resetPasswordToken: String,
   resetPasswordExpire: Date,
@@ -52,4 +60,22 @@ const userSchema = new mongoose.Schema({
   },
 }, { timestamps: true });
 
-export default mongoose.model('User', userSchema);
+// --- Middleware & Methods ---
+
+// 1. Mã hóa mật khẩu trước khi lưu
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) {
+    next();
+  }
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+});
+
+// 2. Phương thức kiểm tra mật khẩu (matchPassword)
+userSchema.methods.matchPassword = async function (enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password);
+};
+
+// 3. Export Default (Chuẩn ES Modules)
+const User = mongoose.model('User', userSchema);
+export default User;
