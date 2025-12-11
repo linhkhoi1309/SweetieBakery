@@ -25,6 +25,11 @@ const userSchema = new mongoose.Schema({
       'Email không hợp lệ',
     ],
   },
+  age: {
+    type: Number,
+    min: [0, 'Tuổi không được nhỏ hơn 0'],
+    max: [120, 'Tuổi không được lớn hơn 120'],
+  },
   password: {
     type: String,
     required: [true, 'Vui lòng nhập mật khẩu'],
@@ -63,13 +68,13 @@ const userSchema = new mongoose.Schema({
 // --- Middleware & Methods ---
 
 // 1. Mã hóa mật khẩu trước khi lưu
-userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) {
-    next();
-  }
+userSchema.pre('save', async function () {
+  if (!this.isModified('password')) return;
+
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
+
 
 // 2. Phương thức kiểm tra mật khẩu (matchPassword)
 userSchema.methods.matchPassword = async function (enteredPassword) {

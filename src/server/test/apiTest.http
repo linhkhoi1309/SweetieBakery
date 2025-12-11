@@ -5,9 +5,9 @@ POST http://localhost:5000/auth/register
 Content-Type: application/json
 
 {
-  "username": "admin_real",
+  "username": "admin_real1",
   "name": "Admin Xịn",
-  "email": "admin@gmail.com",
+  "email": "admin12@gmail.com",
   "password": "123456",
   "phone": "0909000111"
 }
@@ -16,7 +16,7 @@ POST http://localhost:5000/auth/login
 Content-Type: application/json
 
 {
-  "email": "admin@gmail.com",
+  "email": "admin12@gmail.com",
   "password": "123456"
 }
 ### Get all categories
@@ -69,6 +69,39 @@ Content-Type: application/json
 ### Delete a product by ID
 DELETE http://localhost:5000/products/69353cd6432c6aa83d4e3fc6
 Accept: application/json
+
+
+### 1.4. Lấy thông tin cá nhân (Get Profile)
+GET http://localhost:5000/users/profile
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MzhlZWQ4YmMyY2RmMjA2NGNjZjkwYiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2NTMzOTUyNSwiZXhwIjoxNzY3OTMxNTI1fQ.tTpwL-0jIPae4OU0M6B4mHrIOEtyRjEjFn5WgvYyoLY
+
+### 1.5. Cập nhật thông tin cá nhân (Update Profile)
+PUT http://localhost:5000/users/profile
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MzhlZWQ4YmMyY2RmMjA2NGNjZjkwYiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2NTMzOTUyNSwiZXhwIjoxNzY3OTMxNTI1fQ.tTpwL-0jIPae4OU0M6B4mHrIOEtyRjEjFn5WgvYyoLY
+
+{
+  "name": "Nguyễn Văn A",
+  "phone": "0912345678",
+  "address": "123 Đường ABC, Quận 1, TP.HCM",
+  "age": 30
+}
+
+### 1.6 Lấy danh sách Users
+GET http://localhost:5000/users?limit=1&page=1
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MzhlZWQ4YmMyY2RmMjA2NGNjZjkwYiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2NTMzOTUyNSwiZXhwIjoxNzY3OTMxNTI1fQ.tTpwL-0jIPae4OU0M6B4mHrIOEtyRjEjFn5WgvYyoLY
+
+### 1.7 Khóa tài khoản User
+POST http://localhost:5000/users/deactivate/693ac986562377eb07407572
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MzhlZWQ4YmMyY2RmMjA2NGNjZjkwYiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2NTMzOTUyNSwiZXhwIjoxNzY3OTMxNTI1fQ.tTpwL-0jIPae4OU0M6B4mHrIOEtyRjEjFn5WgvYyoLY
+
+### 1.8 Xoá User
+DELETE http://localhost:5000/users/693ac654a519cfbeb8980e23
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MzhlZWQ4YmMyY2RmMjA2NGNjZjkwYiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2NTMzOTUyNSwiZXhwIjoxNzY3OTMxNTI1fQ.tTpwL-0jIPae4OU0M6B4mHrIOEtyRjEjFn5WgvYyoLY
 
 
 ### 5.1. Tạo đánh giá cho sản phẩm
