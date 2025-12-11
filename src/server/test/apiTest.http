@@ -103,7 +103,43 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MzhlZWQ4Y
 { 
   "reply": "Cảm ơn bạn đã ủng hộ Sweetie Bakery! Shop xin gửi tặng bạn voucher giảm 10% cho đơn sau ạ." 
 }
-### 6.1. Kiểm tra/Áp dụng mã giảm giá
+
+### 6.1. Tạo mã giảm giá
+POST http://localhost:5000/coupons
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MzhlZWQ4YmMyY2RmMjA2NGNjZjkwYiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2NTQ1NDk2NywiZXhwIjoxNzY4MDQ2OTY3fQ.oevFRiYADl-7N_bn95o22NYqJjQIWJwSfIjCni1KtEY
+
+{
+  "code": "SALE10",
+  "name": "Giảm 10% đón hè",
+  "description": "Giảm 10% tối đa 50k cho đơn từ 200k",
+  "discountType": "percent",
+  "discountValue": 10,
+  "maxDiscountAmount": 50000,
+  "minOrderValue": 200000,
+  "startDate": "2024-01-01",
+  "endDate": "2025-12-31",
+  "usageLimit": 100
+}
+### 6.2. Lấy danh sách Coupon
+GET http://localhost:5000/coupons
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MzhlZWQ4YmMyY2RmMjA2NGNjZjkwYiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2NTQ1NDk2NywiZXhwIjoxNzY4MDQ2OTY3fQ.oevFRiYADl-7N_bn95o22NYqJjQIWJwSfIjCni1KtEY
+### 6.3. Cập nhật Coupon
+PUT http://localhost:5000/coupons/693ab4f6109955d10031d2e4
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MzhlZWQ4YmMyY2RmMjA2NGNjZjkwYiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2NTQ1NDk2NywiZXhwIjoxNzY4MDQ2OTY3fQ.oevFRiYADl-7N_bn95o22NYqJjQIWJwSfIjCni1KtEY
+
+{
+  "name": "Giảm 15% đón hè",
+  "discountValue": 15,
+  "maxDiscountAmount": 75000
+}
+### 6.4. Xoá Coupon
+DELETE http://localhost:5000/coupons/693ab4f6109955d10031d2e4
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MzhlZWQ4YmMyY2RmMjA2NGNjZjkwYiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2NTQ1NDk2NywiZXhwIjoxNzY4MDQ2OTY3fQ.oevFRiYADl-7N_bn95o22NYqJjQIWJwSfIjCni1KtEY
+### 6.5. Kiểm tra/Áp dụng mã giảm giá
 POST http://localhost:5000/coupons/apply
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MzhlZWQ4YmMyY2RmMjA2NGNjZjkwYiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2NTMzOTUyNSwiZXhwIjoxNzY3OTMxNTI1fQ.tTpwL-0jIPae4OU0M6B4mHrIOEtyRjEjFn5WgvYyoLY
@@ -111,8 +147,6 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MzhlZWQ4Y
 {
   "code": "SALE50"
 }
-
-
 
 ### 7.1. Upload ảnh
 POST http://localhost:5000/upload
@@ -125,3 +159,5 @@ Content-Type: image/jpeg
 
 < ./R.jpg
 --MyBoundary--
+
+### eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MzhlZWQ4YmMyY2RmMjA2NGNjZjkwYiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2NTQ1NDk2NywiZXhwIjoxNzY4MDQ2OTY3fQ.oevFRiYADl-7N_bn95o22NYqJjQIWJwSfIjCni1KtEY
