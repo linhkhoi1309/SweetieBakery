@@ -159,5 +159,11 @@ Content-Type: image/jpeg
 
 < ./R.jpg
 --MyBoundary--
+### 7.2. Xoá ảnh
+DELETE http://localhost:5000/upload
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MzhlZWQ4YmMyY2RmMjA2NGNjZjkwYiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2NTQ1NjA1MywiZXhwIjoxNzY4MDQ4MDUzfQ.m-VV8tSKOnk3bV9OnWexuz6WpplvQOxpzxeyuTKYwrI
 
-### eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MzhlZWQ4YmMyY2RmMjA2NGNjZjkwYiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2NTQ1NDk2NywiZXhwIjoxNzY4MDQ2OTY3fQ.oevFRiYADl-7N_bn95o22NYqJjQIWJwSfIjCni1KtEY
+{
+  "public_id": "sweetie-bakery-products/nvskrq2aywpikcyw2zmh"
+}
