@@ -5,9 +5,9 @@ POST http://localhost:5000/auth/register
 Content-Type: application/json
 
 {
-  "username": "admin_real1",
+  "username": "admin_real2",
   "name": "Admin Xịn",
-  "email": "admin12@gmail.com",
+  "email": "giabao190305a@gmail.com",
   "password": "123456",
   "phone": "0909000111"
 }
