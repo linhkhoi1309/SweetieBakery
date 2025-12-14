@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
 import AuthLayout from "./layouts/AuthLayout";
+import MainLayout from "./layouts/MainLayout";
 
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
@@ -11,12 +12,20 @@ import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 import VerifyCodePage from "./pages/auth/VerifyCodePage";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 
+import HomePage from "./pages/user/HomePage";
+
 function App() {
   return (
     <>
       <Toaster position="top-right" reverseOrder={false} />
 
       <Routes>
+        {/* --- PUBLIC ROUTES --- */}
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<HomePage />} />
+        </Route>
+
+
         {/* Auth Routes */}
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<LoginPage />} />

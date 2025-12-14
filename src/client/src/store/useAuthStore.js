@@ -1,6 +1,6 @@
 import { create } from "zustand";
 // import axios from "axios"; // Tạm thời comment axios vì đang mock data
-import toast from "npm i react-hot-toast";
+import toast from "react-hot-toast";
 
 import { MOCK_USERS, MOCK_TOKEN } from "../data/mockUserData.js";
 
