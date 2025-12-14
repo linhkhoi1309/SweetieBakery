@@ -13,6 +13,8 @@ import VerifyCodePage from "./pages/auth/VerifyCodePage";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 
 import HomePage from "./pages/user/HomePage";
+import ProductPage from "./pages/user/ProductPage";
+import ProductDetailPage from "./pages/user/ProductDetailPage";
 
 function App() {
   return (
@@ -23,6 +25,8 @@ function App() {
         {/* --- PUBLIC ROUTES --- */}
         <Route element={<MainLayout />}>
           <Route path="/" element={<HomePage />} />
+          <Route path="/products" element={<ProductPage />} />
+          <Route path="/products/:id" element={<ProductDetailPage />} />
         </Route>
 
 
