@@ -8,6 +8,7 @@ export const CartProvider = ({ children }) => {
     const saved = localStorage.getItem("cart");
     return saved ? JSON.parse(saved) : [];
   });
+  const [appliedVoucher, setAppliedVoucher] = useState(null);
 
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
@@ -39,13 +40,47 @@ export const CartProvider = ({ children }) => {
     setCart((prev) => prev.filter((i) => i.id !== id));
   };
 
+  const clearCart = () => {
+    setCart([]);
+    setAppliedVoucher(null);
+    localStorage.removeItem("cart");
+  };
+
   const totalItems = useMemo(() =>
     cart.reduce((acc, cur) => acc + cur.quantity, 0)
   );
 
-  const totalPrice = useMemo(() =>
+  const subTotal = useMemo(() =>
     cart.reduce((acc, cur) => acc + cur.price * cur.quantity, 0)
   );
+
+  const applyVoucher = (voucher) => {
+    setAppliedVoucher(voucher);
+  };
+
+  const removeVoucher = () => {
+    setAppliedVoucher(null);
+  };
+
+  const subtotal = cart.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
+  const shippingFee = 30000;
+
+  let discount = 0;
+  if (appliedVoucher) {
+    if (appliedVoucher.code === "FREESHIP") {
+      discount = shippingFee;
+    } else {
+      discount = subtotal * appliedVoucher.discount;
+    }
+  }
+
+  const finalTotal =
+    subtotal +
+    (appliedVoucher?.code === "FREESHIP" ? 0 : shippingFee) -
+    discount;
 
   return (
     <CartContext.Provider
@@ -54,8 +89,15 @@ export const CartProvider = ({ children }) => {
         addToCart,
         updateQuantity,
         removeFromCart,
+        clearCart,
         totalItems,
-        totalPrice,
+        appliedVoucher,
+        applyVoucher,
+        removeVoucher,
+        subTotal,
+        shippingFee,
+        discount,
+        finalTotal,
       }}
     >
       {children}
