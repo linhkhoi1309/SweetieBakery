@@ -15,8 +15,9 @@ import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 import HomePage from "./pages/user/HomePage";
 import ProductPage from "./pages/user/ProductPage";
 import ProductDetailPage from "./pages/user/ProductDetailPage";
-import AboutPage from "./pages/user/AboutPage"; 
+import AboutPage from "./pages/user/AboutPage";
 import WishlistPage from "./pages/user/WishlistPage";
+import CartPage from "./pages/user/CartPage";
 
 function App() {
   return (
@@ -31,8 +32,8 @@ function App() {
           <Route path="/products/:id" element={<ProductDetailPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/wishlist" element={<WishlistPage />} />
+          <Route path="/cart" element={<CartPage />} />
         </Route>
-
 
         {/* Auth Routes */}
         <Route element={<AuthLayout />}>
