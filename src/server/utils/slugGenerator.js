@@ -1,3 +1,5 @@
+import Product from '../models/Product.js';
+
 const slugifyText = (text = '') => {
     const base = text
         .toString()

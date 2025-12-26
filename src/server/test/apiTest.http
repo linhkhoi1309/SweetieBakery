@@ -5,19 +5,29 @@ POST http://localhost:5000/auth/register
 Content-Type: application/json
 
 {
-  "username": "admin_real2",
+  "username": "adminkhoi",
   "name": "Admin Xịn",
-  "email": "giabao190305a@gmail.com",
+  "email": "luongkhoi3456@gmail.com",
   "password": "123456",
   "phone": "0909000111"
 }
+
+### Xác minh email (Verify Email)
+POST  http://localhost:5000/auth/verify-email
+Content-Type: application/json
+
+{
+  "token": "05b96ecb335ae744fe8bf36636fdd06c9822f01fc8879ab1995728a0d1f3ea7c"
+}
+
 ### Đăng nhập (Login)
 POST http://localhost:5000/auth/login
 Content-Type: application/json
 
 {
-  "email": "admin12@gmail.com",
-  "password": "123456"
+  "email": "luongkhoi3456@gmail.com",
+  "password": "123456",
+  "token": "05b96ecb335ae744fe8bf36636fdd06c9822f01fc8879ab1995728a0d1f3ea7c"
 }
 ### Get all categories
 GET http://localhost:5000/categories
@@ -26,6 +36,7 @@ Accept: application/json
 ### Create a new category
 POST http://localhost:5000/categories
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NGU4MmFjNjM5MWFkZDc2OTg2MTM2YSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzY2NzU0MDEzLCJleHAiOjE3NjkzNDYwMTN9.MlYy3Esvweguq_QzLR-tiPVOS-sOPvopoFZT50n5WFE
 
 {
   "name": "Bánh ngọt",
@@ -43,7 +54,7 @@ Accept: application/json
 ### Create a new product
 POST http://localhost:5000/products
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MzhlZWQ4YmMyY2RmMjA2NGNjZjkwYiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2NTMzOTUyNSwiZXhwIjoxNzY3OTMxNTI1fQ.tTpwL-0jIPae4OU0M6B4mHrIOEtyRjEjFn5WgvYyoLY
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NGU4MmFjNjM5MWFkZDc2OTg2MTM2YSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzY2NzU0MDEzLCJleHAiOjE3NjkzNDYwMTN9.MlYy3Esvweguq_QzLR-tiPVOS-sOPvopoFZT50n5WFE
 
 {
   "name": "Bánh kem socola",
@@ -103,6 +114,56 @@ DELETE http://localhost:5000/users/693ac654a519cfbeb8980e23
 Accept: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MzhlZWQ4YmMyY2RmMjA2NGNjZjkwYiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2NTMzOTUyNSwiZXhwIjoxNzY3OTMxNTI1fQ.tTpwL-0jIPae4OU0M6B4mHrIOEtyRjEjFn5WgvYyoLY
 
+
+### 4.1. Tạo đơn hàng (Create Order)
+POST http://localhost:5000/orders
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NGU4MmFjNjM5MWFkZDc2OTg2MTM2YSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzY2NzU0MDEzLCJleHAiOjE3NjkzNDYwMTN9.MlYy3Esvweguq_QzLR-tiPVOS-sOPvopoFZT50n5WFE
+
+{
+  "orderItems": [
+    {
+      "product": "69353e22b46614ec1f6de822",
+      "name": "Bánh kem socola",
+      "quantity": 1,
+      "image": "url...",
+      "price": 250000
+    }
+  ],
+  "shippingAddress": {
+    "recipientName": "Nguyen Van A",
+    "address": "123 Đường Láng",
+    "city": "Hà Nội",
+    "phone": "0909090909"
+  },
+  "paymentMethod": "COD",
+  "shippingPrice": 30000,
+  "totalPrice": 280000
+}
+
+### 4.2. Lấy danh sách đơn hàng của user
+GET http://localhost:5000/orders/myorders
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NGU4MmFjNjM5MWFkZDc2OTg2MTM2YSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzY2NzU0MDEzLCJleHAiOjE3NjkzNDYwMTN9.MlYy3Esvweguq_QzLR-tiPVOS-sOPvopoFZT50n5WFE
+
+### 4.3. Lấy chi tiết đơn hàng theo ID
+GET http://localhost:5000/orders/694e8868cf26de7d5a98e71a
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NGU4MmFjNjM5MWFkZDc2OTg2MTM2YSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzY2NzU0MDEzLCJleHAiOjE3NjkzNDYwMTN9.MlYy3Esvweguq_QzLR-tiPVOS-sOPvopoFZT50n5WFE
+
+### 4.4. Lay danh sách tất cả đơn hàng (Admin)
+GET http://localhost:5000/orders
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NGU4MmFjNjM5MWFkZDc2OTg2MTM2YSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzY2NzU0MDEzLCJleHAiOjE3NjkzNDYwMTN9.MlYy3Esvweguq_QzLR-tiPVOS-sOPvopoFZT50n5WFE
+
+### 4.5. Cập nhật trạng thái đơn hàng (Admin)
+PUT http://localhost:5000/orders/694e8868cf26de7d5a98e71a/status
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NGU4MmFjNjM5MWFkZDc2OTg2MTM2YSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzY2NzU0MDEzLCJleHAiOjE3NjkzNDYwMTN9.MlYy3Esvweguq_QzLR-tiPVOS-sOPvopoFZT50n5WFE
+
+{
+  "status": "Shipping"
+}
 
 ### 5.1. Tạo đánh giá cho sản phẩm
 POST http://localhost:5000/products/69353e22b46614ec1f6de822/reviews
