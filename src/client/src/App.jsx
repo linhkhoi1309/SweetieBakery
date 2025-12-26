@@ -18,6 +18,7 @@ import ProductDetailPage from "./pages/user/ProductDetailPage";
 import AboutPage from "./pages/user/AboutPage";
 import WishlistPage from "./pages/user/WishlistPage";
 import CartPage from "./pages/user/CartPage";
+import CheckoutPage from "./pages/user/CheckoutPage";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/wishlist" element={<WishlistPage />} />
           <Route path="/cart" element={<CartPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
         </Route>
 
         {/* Auth Routes */}

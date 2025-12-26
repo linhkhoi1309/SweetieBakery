@@ -13,13 +13,20 @@ const validVouchers = [
 ];
 
 const CartPage = () => {
-  const { totalItems, cart, removeFromCart, updateQuantity, totalPrice } =
-    useCart();
+  const {
+    totalItems,
+    cart,
+    removeFromCart,
+    updateQuantity,
+    appliedVoucher, // Lấy từ context
+    applyVoucher, // Lấy từ context
+    removeVoucher, // Lấy từ context
+    subTotal,
+    shippingFee,
+    discount,
+    finalTotal,
+  } = useCart();
   const [voucherCode, setVoucherCode] = useState("");
-  const [appliedVoucher, setAppliedVoucher] = useState({
-    code: "",
-    discount: 0,
-  });
 
   const handleApplyVoucher = () => {
     const voucher = validVouchers.find(
@@ -27,7 +34,7 @@ const CartPage = () => {
     );
 
     if (voucher) {
-      setAppliedVoucher(voucher);
+      applyVoucher(voucher);
       toast.success(
         `Áp dụng mã ${voucher.code} thành công! ${voucher.description}`
       );
@@ -37,27 +44,10 @@ const CartPage = () => {
   };
 
   const handleRemoveVoucher = () => {
-    setAppliedVoucher(null);
+    removeVoucher();
     setVoucherCode("");
     toast.info("Đã xóa mã giảm giá");
   };
-
-  const subtotal = totalPrice;
-  const shippingFee = 30000;
-
-  let discount = 0;
-  if (appliedVoucher) {
-    if (appliedVoucher.code === "FREESHIP") {
-      discount = shippingFee;
-    } else {
-      discount = subtotal * appliedVoucher.discount;
-    }
-  }
-
-  const total =
-    subtotal +
-    (appliedVoucher?.code === "FREESHIP" ? 0 : shippingFee) -
-    (appliedVoucher?.code === "FREESHIP" ? 0 : discount);
 
   if (totalItems === 0) {
     return (
@@ -213,7 +203,7 @@ const CartPage = () => {
                 <div className="flex justify-between items-center text-gray-600">
                   <span className="font-medium">Tạm tính</span>
                   <span className="font-semibold text-gray-800">
-                    {subtotal.toLocaleString("vi-VN")}đ
+                    {subTotal.toLocaleString("vi-VN")}đ
                   </span>
                 </div>
 
@@ -254,7 +244,7 @@ const CartPage = () => {
                   </span>
                   <div className="text-right">
                     <span className="block text-2xl font-black text-[#F7B5D5] leading-none">
-                      {total.toLocaleString("vi-VN")}đ
+                      {finalTotal.toLocaleString("vi-VN")}đ
                     </span>
                     <span className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">
                       Đã bao gồm VAT
