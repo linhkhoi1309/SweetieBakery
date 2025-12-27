@@ -2,11 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
+import { useAuthStore } from "../../store/useAuthStore.js";
+
 const VerifyEmailPage = () => {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const inputRefs = useRef([]);
 
   const navigate = useNavigate();
+  const { verifyEmail } = useAuthStore();
 
   const handleChange = (index, value) => {
     const newCode = [...code];
@@ -42,9 +45,15 @@ const VerifyEmailPage = () => {
 
   const handleVerifyCode = async (e) => {
     e?.preventDefault();
-    const verificationCode = code.join("");
-    navigate("/");
-    toast.success("Email verified successfully");
+    const verificationCode = code.join(""); // Gộp 6 ô input thành 1 chuỗi
+
+    const success = await verifyEmail(verificationCode);
+
+    if (success) {
+      navigate("/");
+    } else {
+      setCode(["", "", "", "", "", ""]);
+    }
   };
 
   const handleResendCode = async (e) => {

@@ -6,8 +6,10 @@ import mailIcon from "../../assets/auth/mail.png";
 import blockIcon from "../../assets/auth/locked-computer.png";
 
 import toast from "react-hot-toast";
+import { useAuthStore } from "../../store/useAuthStore.js";
 
 const LoginPage = () => {
+  const { login, isLoggingIn } = useAuthStore();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -17,16 +19,14 @@ const LoginPage = () => {
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    alert(`
-        email: ${formData.email},
-        password: ${formData.password}
-    `);
+    const success = await login(formData);
 
-    navigate("/");
-    toast.success("Logged in successfully!");
+    if (success) {
+      navigate("/"); // Chuyển về trang chủ nếu thành công
+    }
   };
 
   const handleRegisterClick = () => {
