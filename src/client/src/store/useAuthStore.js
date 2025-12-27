@@ -3,6 +3,7 @@ import { create } from "zustand";
 import toast from "react-hot-toast";
 
 import { MOCK_USERS, MOCK_TOKEN } from "../data/mockUserData.js";
+import { http } from "../libs/http.js";
 
 //const API_URL = "http://localhost:5000/auth";
 //const USER_API_URL = "http://localhost:5000/users"; // Thêm URL cho user profile
@@ -14,6 +15,7 @@ export const useAuthStore = create((set) => ({
   isSigningUp: false,
   isLoggingIn: false,
   isCheckingAuth: true,
+  isVerifying: false,
 
   // --- 1. ĐĂNG KÝ  ---
   signup: async (userData) => {
@@ -49,29 +51,22 @@ export const useAuthStore = create((set) => ({
   login: async (loginData) => {
     set({ isLoggingIn: true });
     try {
-      //const res = await axios.post(`${API_URL}/login`, loginData);
+      const res = await http.post("/auth/login", loginData);
 
-      // Tìm user trong file mockData
-      const foundUser = MOCK_USERS.find(
-        (u) => u.email === loginData.email && u.password === loginData.password
-      );
-
-      if (!foundUser) {
-        throw new Error("Email hoặc mật khẩu không đúng (Mock Check)");
+      if (!res.data.success) {
+        toast.error("Sai tài khoản hoặc mật khẩu");
+        return;
       }
 
-      // API trả về: { success: true, token: "...", user: {...} }
-      // Lưu token
-      //localStorage.setItem("token", res.data.token);
-      localStorage.setItem("token", MOCK_TOKEN);
+      localStorage.setItem("token", res.data.token);
 
-      // Lưu user vào Store
-      //set({ user: res.data.user });
-      set({ user: foundUser });
+      set({ user: res.data.user, isLoggingIn: false });
 
       toast.success("Đăng nhập thành công!");
+      return true;
     } catch (error) {
       toast.error(error.response?.data?.message || "Đăng nhập thất bại");
+      return false;
     } finally {
       set({ isLoggingIn: false });
     }
@@ -83,14 +78,7 @@ export const useAuthStore = create((set) => ({
     localStorage.removeItem("token");
     set({ user: null });
 
-    try {
-      //await axios.post(`${API_URL}/logout`);
-      await new Promise((resolve) => setTimeout(resolve, 500)); // Giả lập gọi API logout
-      toast.success("Đã đăng xuất");
-    } catch (error) {
-      // Lỗi logout thường không quan trọng, không cần toast
-      console.log("Logout error", error);
-    }
+    toast.success("Hẹn gặp lại bạn sớm!");
   },
 
   // --- 4. CHECK AUTH (KHI F5 TRANG) ---
@@ -124,6 +112,29 @@ export const useAuthStore = create((set) => ({
       localStorage.removeItem("token");
     } finally {
       set({ isCheckingAuth: false });
+    }
+  },
+
+  verifyEmail: async (verificationCode) => {
+    set({ isVerifying: true });
+    try {
+      // 1. Gọi API xác thực
+      const res = await http.post("/auth/verify-email", {
+        token: verificationCode,
+      });
+
+      // 2. Lưu token vào localStorage
+      localStorage.setItem("token", res.data.token);
+
+      // 3. Cập nhật user vào Store (Đây là lúc user chính thức đăng nhập)
+      set({ user: res.data.user, isVerifying: false });
+
+      toast.success("Xác thực thành công!");
+      return true;
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Xác thực thất bại");
+      set({ isVerifying: false });
+      return false;
     }
   },
 }));

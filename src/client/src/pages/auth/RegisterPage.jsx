@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 import errorIcon from "../../assets/auth/mark.png";
 import mailIcon from "../../assets/auth/mail.png";
 import blockIcon from "../../assets/auth/locked-computer.png";
 
-import { toast } from "react-hot-toast";
+import { http } from "../../libs/http.js";
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
+    name: "",
     email: "",
     username: "",
     password: "",
     confirmedPassword: "",
+    phone: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [matchPassword, setMatchPassword] = useState(false);
@@ -23,7 +26,7 @@ const RegisterPage = () => {
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (formData.password !== formData.confirmedPassword) {
@@ -31,14 +34,24 @@ const RegisterPage = () => {
       return;
     }
 
-    alert(`
-        email: ${formData.email},
-        username: ${formData.username},
-        password: ${formData.password}
-    `);
+    try {
+      const response = await http.post("/auth/register", {
+        name: formData.name || formData.username,
+        email: formData.email,
+        username: formData.username,
+        password: formData.password,
+        phone: formData.phone || "0000000000",
+      });
 
-    navigate("/verify-email");
-    toast.success("Account created successfully!");
+      if (response.data.success) {
+        toast.success(response.data.message); // "Đăng ký thành công! Vui lòng kiểm tra email..."
+        navigate("/verify-email"); // Chuyển hướng người dùng đến trang thông báo kiểm tra email
+      }
+    } catch (error) {
+      // Hiển thị lỗi từ server (ví dụ: Email đã tồn tại)
+      const errorMsg = error.response?.data?.message || "Đăng ký thất bại";
+      toast.error(errorMsg);
+    }
   };
 
   const handleLoginClick = () => {
