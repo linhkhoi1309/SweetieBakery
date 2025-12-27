@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 import { Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 
@@ -85,7 +86,7 @@ const CartPage = () => {
         <div className="lg:col-span-2 space-y-4">
           {cart.map((item) => (
             <div
-              key={`${item.id}-${item.selectedSize}-${item.selectedFlavor}`}
+              key={`${item._id}-${item.selectedSize}-${item.selectedFlavor}`}
               className="mb-4 bg-white rounded-2xl border border-pink-100 shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden"
             >
               <div className="p-4 sm:p-6">
@@ -131,7 +132,7 @@ const CartPage = () => {
 
                       {/* Nút xóa sản phẩm */}
                       <button
-                        onClick={() => removeFromCart(item.id)}
+                        onClick={() => removeFromCart(item._id)}
                         className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors hover:cursor-pointer"
                         title="Xóa khỏi giỏ hàng"
                       >
@@ -144,7 +145,7 @@ const CartPage = () => {
                       <div className="flex items-center bg-gray-50 rounded-full p-1 border border-gray-100">
                         <button
                           onClick={() =>
-                            updateQuantity(item.id, item.quantity - 1)
+                            updateQuantity(item._id, item.quantity - 1)
                           }
                           disabled={item.quantity <= 1}
                           className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white hover:shadow-sm disabled:opacity-30 transition-all text-gray-600"
@@ -158,7 +159,7 @@ const CartPage = () => {
 
                         <button
                           onClick={() =>
-                            updateQuantity(item.id, item.quantity + 1)
+                            updateQuantity(item._id, item.quantity + 1)
                           }
                           disabled={item.quantity >= item.stock}
                           className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white hover:shadow-sm disabled:opacity-30 transition-all text-gray-600"

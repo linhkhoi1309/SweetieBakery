@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import toast from "react-hot-toast";
 
+import { http } from "../../libs/http.js";
+
 import FeaturedProducts from "../../components/features/home/FeaturedProducts";
 import HeroSection from "../../components/features/home/HeroSection";
 import Promotions from "../../components/features/home/Promotions.jsx";
@@ -27,20 +29,27 @@ const HomePage = () => {
   useEffect(() => {
     let isMounted = true;
 
-    const loadFeaturedProducts = async () => {
+    const fetchHomeData = async () => {
       try {
         setIsLoading(true);
         setError(null);
 
-        const res_products = MOCK_FEATURED_PRODUCTS.slice(0, 6);
+        // const res_products = MOCK_FEATURED_PRODUCTS.slice(0, 6);
         const res_promotions = MOCK_PROMOTIONS;
         const res_reviews = MOCK_REVIEWS.slice(0, 4);
-        await new Promise((resolve) => setTimeout(resolve, 500));
+
+        const [productsRes, couponsRes] = await Promise.all([
+          http.get("/products"),
+        ]);
 
         if (isMounted) {
-          setFeaturedProducts(res_products);
-          setPromotions(res_promotions);
-          setReviews(res_reviews);
+          if (isMounted) {
+            setFeaturedProducts(productsRes.data.products?.slice(0, 6) || []);
+
+            setPromotions(res_promotions);
+
+            setReviews(res_reviews.slice(0, 4) || []);
+          }
         }
       } catch (error) {
         console.log("Error loading data: ", error);
@@ -50,7 +59,7 @@ const HomePage = () => {
       }
     };
 
-    loadFeaturedProducts();
+    fetchHomeData();
 
     return () => {
       isMounted = false;
@@ -97,7 +106,7 @@ const HomePage = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {reviews.map((review) => (
-                <ReviewCard key={review.id} review={review} />
+                <ReviewCard key={review._id || review.id} review={review} />
               ))}
             </div>
           </section>

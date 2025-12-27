@@ -15,7 +15,7 @@ const OrderTrackingPage = () => {
   console.log(orderID);
 
   // Mock status - Trong thực tế sẽ lấy từ API/Context
-  const currentStatus = "completed"; // pending, confirmed, baking, shipping, completed
+  const currentStatus = "baking"; // pending, confirmed, baking, shipping, completed
 
   const statuses = [
     {

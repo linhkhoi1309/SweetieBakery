@@ -12,7 +12,7 @@ const CheckoutPage = () => {
   const navigate = useNavigate();
 
   const { cart, clearCart, shippingFee, finalTotal } = useCart();
-  const [step, setStep] = useState(3);
+  const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     name: "",
     phone: "",

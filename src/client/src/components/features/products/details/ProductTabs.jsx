@@ -60,7 +60,7 @@ const ProductTabs = ({
                 <strong className="font-semibold text-gray-900">
                   Danh mục:
                 </strong>{" "}
-                {product.category}
+                {product.category?.name || product.category}
               </p>
               <p>
                 <strong className="font-semibold text-gray-900">

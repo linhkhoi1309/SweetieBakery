@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Search, SlidersHorizontal, X } from "lucide-react";
 
+import { http } from "../../libs/http.js";
 import { MOCK_CATEGORIES } from "../../data/mockCategories.js";
 
 import FilterSideBar from "../../components/features/products/FilterSideBar";
@@ -8,18 +9,32 @@ import MobileFilterMenu from "../../components/features/products/MobileFilterMen
 import ProductList from "../../components/features/products/ProductList";
 
 const ProductPage = () => {
+  const [isLoadingCategories, setIsLoadingCategories] = useState(true);
   const [categories, setCategories] = useState([]);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
-  const [priceRange, setPriceRange] = useState([0, 500000]);
+  const [priceRange, setPriceRange] = useState([0, 1000000]);
   const [minRating, setMinRating] = useState(0);
 
   useEffect(() => {
     const loadCategories = async () => {
+      //setCategories(MOCK_CATEGORIES);
       // Call API
-      setCategories(MOCK_CATEGORIES);
+      try {
+        setIsLoadingCategories(true);
+        const res = await http.get("/categories");
+
+        console.log(res.data.data);
+
+        setCategories(res.data.categories || res.data.data);
+      } catch (error) {
+        console.error("Lỗi khi tải danh mục:", error);
+        toast.error("Không thể tải danh sách danh mục bánh.");
+      } finally {
+        setIsLoadingCategories(false);
+      }
     };
 
     loadCategories();
@@ -27,7 +42,7 @@ const ProductPage = () => {
 
   const handleResetFilters = () => {
     setSelectedCategories([]);
-    setPriceRange([0, 500000]);
+    setPriceRange([0, 1000000]);
     setMinRating(0);
     setSearchQuery("");
   };
