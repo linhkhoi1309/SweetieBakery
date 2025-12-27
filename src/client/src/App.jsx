@@ -1,6 +1,8 @@
-import { useState } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
+import { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
+
+import { useAuthStore } from "./store/useAuthStore";
 
 import AuthLayout from "./layouts/AuthLayout";
 import MainLayout from "./layouts/MainLayout";
@@ -21,7 +23,37 @@ import CartPage from "./pages/user/CartPage";
 import CheckoutPage from "./pages/user/CheckoutPage";
 import OrderTrackingPage from "./pages/user/OrderTrackingPage";
 
+import AdminLayout from "./layouts/AdminLayout";
+import AdminRoute from "./layouts/admin/AdminRoute";
+import ProductManagementPage from "./pages/admin/ProductManagementPage";
+
+// Trang Dashboard mẫu để test
+const AdminDashboard = () => (
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="bg-white p-6 rounded-3xl border border-pink-50 shadow-sm">
+      <p className="text-gray-500 text-sm">Doanh số hôm nay</p>
+      <h3 className="text-2xl font-black text-gray-800">5,420,000đ</h3>
+    </div>
+    {/* Các card khác... */}
+  </div>
+);
+
 function App() {
+  const { checkAuth, isCheckingAuth } = useAuthStore();
+
+  useEffect(() => {
+    checkAuth(); // Gọi hàm kiểm tra ngay khi mở app
+  }, [checkAuth]);
+
+  // Nếu đang kiểm tra auth ở mức toàn cục, có thể hiện loading ở đây
+  // để tránh việc các route bên dưới bị render nhầm trạng thái
+  if (isCheckingAuth)
+    return (
+      <div className="flex items-center justify-center h-screen bg-pink-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#F7B5D5]"></div>
+      </div>
+    );
+
   return (
     <>
       <Toaster position="top-right" reverseOrder={false} />
@@ -37,6 +69,22 @@ function App() {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/order-tracking/:id" element={<OrderTrackingPage />} />
+        </Route>
+
+        {/* --- ADMIN ROUTES --- */}
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <AdminLayout />
+            </AdminRoute>
+          }
+        >
+          {/* Tự động chuyển /admin sang /admin/dashboard */}
+          <Route index element={<Navigate to="/admin/dashboard" replace />} />
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="products" element={<ProductManagementPage />} />
+          {/* Thêm các Route admin khác ở đây */}
         </Route>
 
         {/* Auth Routes */}
