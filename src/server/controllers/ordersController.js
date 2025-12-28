@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import Order from "../models/Order.js";
 import Product from "../models/Product.js";
 import Coupon from "../models/Coupon.js";
+import User from "../models/User.js";
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 const toNumber = (value, fallback = 0) => {
@@ -274,5 +275,74 @@ export async function updateOrderStatus(req, res) {
       message: "Không thể cập nhật trạng thái đơn hàng",
       error: error.message,
     });
+  }
+}
+
+export async function getAdminStats(req, res) {
+  try {
+    const now = new Date();
+    const startOfToday = new Date(now.setHours(0, 0, 0, 0));
+
+    // 1. Tính tổng doanh thu và số đơn hàng
+    const orders = await Order.find({ status: { $ne: "Cancelled" } });
+    const totalRevenue = orders.reduce(
+      (sum, order) => sum + order.totalPrice,
+      0
+    );
+    const totalOrders = orders.length;
+
+    // 2. Doanh thu hôm nay
+    const todayOrders = await Order.find({
+      createdAt: { $gte: startOfToday },
+      status: { $ne: "Cancelled" },
+    });
+    const todayRevenue = todayOrders.reduce(
+      (sum, order) => sum + order.totalPrice,
+      0
+    );
+
+    // 3. Tổng số khách hàng
+    const totalUsers = await User.countDocuments({ role: "user" });
+
+    // 4. Dữ liệu biểu đồ 7 ngày qua
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    const dailyStats = await Order.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: sevenDaysAgo },
+          status: { $ne: "Cancelled" },
+        },
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%d/%m", date: "$createdAt" } },
+          revenue: { $sum: "$totalPrice" },
+          count: { $sum: 1 },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        summary: {
+          totalRevenue,
+          todayRevenue,
+          totalOrders,
+          totalUsers,
+          newOrdersToday: todayOrders.length,
+        },
+        chartData: dailyStats.map((item) => ({
+          name: item._id,
+          doanhthu: item.revenue,
+          donhang: item.count,
+        })),
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 }

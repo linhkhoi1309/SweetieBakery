@@ -30,6 +30,7 @@ import OrderManagementPage from "./pages/admin/OrderManagementPage";
 import PromotionManagementPage from "./pages/admin/PromotionManagementPage";
 import ReviewManagementPage from "./pages/admin/ReviewManagementPage";
 import Account from "./pages/user/Account";
+import DashboardPage from "./pages/admin/DashboardPage";
 
 // Trang Dashboard mẫu để test
 const AdminDashboard = () => (
@@ -85,7 +86,7 @@ function App() {
         >
           {/* Tự động chuyển /admin sang /admin/dashboard */}
           <Route index element={<Navigate to="/admin/dashboard" replace />} />
-          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="dashboard" element={<DashboardPage />} />
           <Route path="products" element={<ProductManagementPage />} />
           <Route path="orders" element={<OrderManagementPage />} />
           <Route path="promotions" element={<PromotionManagementPage />} />
