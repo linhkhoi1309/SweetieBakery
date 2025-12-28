@@ -86,31 +86,34 @@ export const useAuthStore = create((set) => ({
     set({ isCheckingAuth: true });
     try {
       const token = localStorage.getItem("token");
+
+      // Nếu không có token, dừng kiểm tra ngay lập tức
       if (!token) {
-        set({ isCheckingAuth: false, user: null });
+        set({ user: null, isCheckingAuth: false });
         return;
       }
 
-      // Gắn token thủ công vào header
-      const config = {
-        headers: { Authorization: `Bearer ${token}` },
-      };
+      // Gọi API lấy thông tin cá nhân (Profile) của User dựa trên token
+      const res = await http.get("/auth/me", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-      // Gọi API Get Profile
-      //const res = await axios.get(`${USER_API_URL}/profile`, config);
-
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      const currentUser = MOCK_USERS[0];
-
-      // CẬP NHẬT: Xử lý trường hợp API trả về { success: true, user: {...} }
-      // Nếu res.data.user tồn tại thì lấy, nếu không thì lấy res.data
-      //set({ user: res.data.user || res.data });
-      set({ user: currentUser });
+      if (res.data.success) {
+        // Cập nhật user thật từ Database vào Store
+        set({ user: res.data.user });
+      } else {
+        // Nếu API trả về không thành công (token hỏng/hết hạn)
+        localStorage.removeItem("token");
+        set({ user: null });
+      }
     } catch (error) {
-      console.log("Phiên đăng nhập hết hạn hoặc lỗi mạng");
-      set({ user: null });
+      console.error("Phiên đăng nhập hết hạn hoặc lỗi kết nối:", error.message);
       localStorage.removeItem("token");
+      set({ user: null });
     } finally {
+      // Phải luôn chuyển về false để AdminRoute ngừng render Loading
       set({ isCheckingAuth: false });
     }
   },

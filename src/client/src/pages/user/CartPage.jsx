@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 import { Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 
 import { Button } from "../../components/ui/Button";
 import { useCart } from "../../context/CartContext";
+import { http } from "../../libs/http";
 
 const validVouchers = [
   { code: "NEW20", discount: 0.2, description: "Giảm 20%" },
@@ -27,19 +29,32 @@ const CartPage = () => {
     finalTotal,
   } = useCart();
   const [voucherCode, setVoucherCode] = useState("");
+  const [isApplying, setIsApplying] = useState(false);
 
-  const handleApplyVoucher = () => {
-    const voucher = validVouchers.find(
-      (v) => v.code.toUpperCase() === voucherCode.toUpperCase()
-    );
+  const handleApplyVoucher = async () => {
+    if (!voucherCode.trim()) {
+      return toast.error("Vui lòng nhập mã giảm giá");
+    }
 
-    if (voucher) {
-      applyVoucher(voucher);
-      toast.success(
-        `Áp dụng mã ${voucher.code} thành công! ${voucher.description}`
-      );
-    } else {
-      toast.error("Mã giảm giá không hợp lệ");
+    setIsApplying(true);
+    try {
+      const res = await http.post("/coupons/apply", {
+        code: voucherCode,
+        orderValue: subTotal,
+      });
+
+      if (res.data.success) {
+        applyVoucher(res.data.data);
+        toast.success(res.data.data.message);
+        setVoucherCode(""); // Xóa ô input sau khi thành công
+      }
+    } catch (error) {
+      const message =
+        error.response?.data?.message || "Mã giảm giá không hợp lệ";
+      toast.error(message);
+      removeVoucher(); // Xóa voucher cũ nếu áp dụng mã mới thất bại
+    } finally {
+      setIsApplying(false);
     }
   };
 
@@ -85,7 +100,7 @@ const CartPage = () => {
         <div className="lg:col-span-2 space-y-4">
           {cart.map((item) => (
             <div
-              key={`${item.id}-${item.selectedSize}-${item.selectedFlavor}`}
+              key={`${item._id}-${item.selectedSize}-${item.selectedFlavor}`}
               className="mb-4 bg-white rounded-2xl border border-pink-100 shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden"
             >
               <div className="p-4 sm:p-6">
@@ -131,7 +146,7 @@ const CartPage = () => {
 
                       {/* Nút xóa sản phẩm */}
                       <button
-                        onClick={() => removeFromCart(item.id)}
+                        onClick={() => removeFromCart(item._id)}
                         className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors hover:cursor-pointer"
                         title="Xóa khỏi giỏ hàng"
                       >
@@ -144,7 +159,7 @@ const CartPage = () => {
                       <div className="flex items-center bg-gray-50 rounded-full p-1 border border-gray-100">
                         <button
                           onClick={() =>
-                            updateQuantity(item.id, item.quantity - 1)
+                            updateQuantity(item._id, item.quantity - 1)
                           }
                           disabled={item.quantity <= 1}
                           className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white hover:shadow-sm disabled:opacity-30 transition-all text-gray-600"
@@ -158,7 +173,7 @@ const CartPage = () => {
 
                         <button
                           onClick={() =>
-                            updateQuantity(item.id, item.quantity + 1)
+                            updateQuantity(item._id, item.quantity + 1)
                           }
                           disabled={item.quantity >= item.stock}
                           className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white hover:shadow-sm disabled:opacity-30 transition-all text-gray-600"
@@ -269,13 +284,14 @@ const CartPage = () => {
                     value={voucherCode}
                     onChange={(e) => setVoucherCode(e.target.value)}
                     className="flex-1 px-4 py-2 rounded-xl border border-pink-100 focus:outline-none focus:ring-2 focus:ring-[#F7B5D5] focus:border-transparent transition-all"
+                    disabled={isApplying || !!appliedVoucher}
                   />
                   <button
                     onClick={handleApplyVoucher}
-                    disabled={appliedVoucher !== null || !voucherCode}
-                    className="px-4 py-2 bg-gray-800 text-white rounded-xl font-bold hover:bg-gray-700 disabled:bg-gray-200 disabled:cursor-not-allowed transition-all shadow-sm"
+                    disabled={isApplying || !!appliedVoucher}
+                    className="px-4 py-2 bg-gray-800 text-white rounded-xl font-bold hover:bg-gray-700 disabled:bg-gray-200 disabled:cursor-not-allowed transition-all shadow-sm hover:cursor-pointer"
                   >
-                    Áp dụng
+                    {isApplying ? "Đang áp dụng..." : "Áp dụng"}
                   </button>
                 </div>
 

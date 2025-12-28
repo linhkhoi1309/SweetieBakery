@@ -1,18 +1,21 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { Check, CreditCard, MapPin, Package } from "lucide-react";
+import { Check, CreditCard, Loader2, MapPin, Package } from "lucide-react";
 
 import { Input } from "../../components/ui/Input";
 import { Label } from "../../components/ui/Label";
 import { RadioGroup, RadioGroupItem } from "../../components/ui/RadioGroup";
 import { useCart } from "../../context/CartContext";
+import { http } from "../../libs/http";
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
 
-  const { cart, clearCart, shippingFee, finalTotal } = useCart();
-  const [step, setStep] = useState(3);
+  const { cart, clearCart, shippingFee, discount, finalTotal, appliedVoucher } =
+    useCart();
+  const [isSubmitting, setIsSubmitting] = useState(false); // State loading
+  const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -45,12 +48,56 @@ const CheckoutPage = () => {
     setStep((prev) => prev + 1);
   };
 
-  const handlePlaceOrder = () => {
-    const orderId =
-      "ORD" + Math.random().toString(36).substr(2, 9).toUpperCase();
-    clearCart();
-    toast.success("Đặt hàng thành công!");
-    navigate(`/order-tracking/${orderId}`);
+  const handlePlaceOrder = async () => {
+    setIsSubmitting(true);
+
+    try {
+      // Chuẩn bị dữ liệu gửi lên (Payload)
+      const orderData = {
+        orderItems: cart.map((item) => ({
+          product: item._id, // ID sản phẩm từ MongoDB
+          quantity: item.quantity,
+        })),
+
+        shippingAddress: {
+          recipientName: formData.name, // Chuyển từ 'name' sang 'recipientName'
+          address: formData.address,
+          city: formData.city,
+          phone: formData.phone,
+        },
+
+        paymentMethod: formData.paymentMethod === "cod" ? "COD" : "Online",
+
+        shippingPrice: shippingFee,
+        discountAmount: discount, // Lấy từ CartContext
+        totalPrice: finalTotal, // Tổng tiền cuối cùng
+        couponCode: appliedVoucher ? appliedVoucher.code : null,
+      };
+
+      // Gọi API POST /orders
+      const res = await http.post("/orders", orderData);
+
+      console.log("Da tra ve du lieu thanh cong");
+
+      // Xử lý kết quả trả về
+      if (res.data.success) {
+        toast.success(res.data.message || "Đặt hàng thành công! 🎉");
+
+        // Xóa giỏ hàng trong LocalStorage và Context
+        clearCart();
+
+        // Chuyển hướng sang trang theo dõi đơn hàng
+        navigate(`/order-tracking/${res.data.data._id}`);
+      }
+    } catch (error) {
+      console.error("Lỗi đặt hàng:", error);
+
+      const errorMessage =
+        error.response?.data?.message || "Đặt hàng thất bại, vui lòng thử lại.";
+      toast.error(errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -379,7 +426,7 @@ const CheckoutPage = () => {
                     <div className="space-y-3 max-h-[200px] overflow-y-auto pr-2 custom-scrollbar">
                       {cart.map((item) => (
                         <div
-                          key={`${item.id}-${item.selectedSize}-${item.selectedFlavor}`}
+                          key={`${item._id}-${item.selectedSize}-${item.selectedFlavor}`}
                           className="flex justify-between items-center bg-white p-3 rounded-xl border border-gray-50 shadow-sm"
                         >
                           <div className="flex flex-col">
@@ -498,8 +545,16 @@ const CheckoutPage = () => {
                 </div>
               </div>
 
-              <button className="w-full mt-6 py-4 bg-[#F7B5D5] hover:bg-[#f39cb4] text-white rounded-2xl font-bold text-lg shadow-lg shadow-pink-100 transition-all active:scale-[0.98]">
-                Xác nhận đơn hàng
+              <button
+                onClick={handlePlaceOrder}
+                disabled={isSubmitting}
+                className="w-full mt-6 py-4 bg-[#F7B5D5] hover:bg-[#f39cb4] text-white rounded-2xl font-bold text-lg shadow-lg flex justify-center items-center gap-2 disabled:opacity-70"
+              >
+                {isSubmitting ? (
+                  <Loader2 className="animate-spin" />
+                ) : (
+                  "Xác nhận đặt hàng"
+                )}
               </button>
             </div>
           </div>

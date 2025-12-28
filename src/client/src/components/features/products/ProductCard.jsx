@@ -21,16 +21,18 @@ const ProductCard = ({ product }) => {
     e.preventDefault();
     toggleWishlist(product);
     toast.success(
-      isInWishlist(product.id) ? "Đã xóa khỏi wishlist" : "Đã thêm vào wishlist"
+      isInWishlist(product._id)
+        ? "Đã xóa khỏi wishlist"
+        : "Đã thêm vào wishlist"
     );
   };
 
   return (
     <div className="bg-card text-card-foreground flex flex-col gap-6 rounded-xl group overflow-hidden hover:shadow-lg transition-shadow">
       <div className="relative aspect-square overflow-hidden">
-        <Link to={`/products/${product.id}`}>
+        <Link to={`/products/${product._id}`}>
           <img
-            src={product.image}
+            src={product.images[0].url}
             alt={product.name}
             className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-300"
           />
@@ -54,11 +56,15 @@ const ProductCard = ({ product }) => {
           variant="ghost"
           size="icon"
           className={` absolute top-2 right-2 bg-white/90 hover:bg-white ${
-            isInWishlist(product.id) ? "text-red-500" : "text-gray-500"
+            isInWishlist(product._id) ? "text-red-500" : "text-gray-500"
           }`}
           onClick={handleToggleWishlist}
         >
-          <Heart className={`h-6 w-6 ${isInWishlist ? "fill-current" : ""}`} />
+          <Heart
+            className={`h-6 w-6 ${
+              isInWishlist(product._id) ? "fill-current" : ""
+            }`}
+          />
         </Button>
       </div>
 

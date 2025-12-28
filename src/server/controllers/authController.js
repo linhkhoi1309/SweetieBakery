@@ -29,6 +29,14 @@ export async function login(req, res) {
       });
     }
 
+    if (!user.isActive) {
+      return res.status(403).json({
+        success: false,
+        message:
+          "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ Admin để biết thêm chi tiết.",
+      });
+    }
+
     const token = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET || "secret123",
@@ -182,5 +190,38 @@ export async function verifyEmail(req, res) {
     res
       .status(500)
       .json({ success: false, message: "Lỗi server", error: error.message });
+  }
+}
+
+export async function getMe(req, res) {
+  try {
+    // Middleware xác thực (authMiddleware) sẽ giải mã token
+    // và gán thông tin user vào req.user
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Không tìm thấy người dùng" });
+    }
+
+    if (!user.isActive) {
+      return res
+        .status(403)
+        .json({ success: false, message: "Tài khoản đã bị vô hiệu hóa" });
+    }
+
+    res.status(200).json({
+      success: true,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        avatar: user.avatar,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Lỗi server" });
   }
 }

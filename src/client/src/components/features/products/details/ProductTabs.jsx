@@ -1,4 +1,4 @@
-import { Star, User } from "lucide-react";
+import { MessageSquare, Star, User } from "lucide-react";
 
 const ProductTabs = ({
   activeTab,
@@ -60,7 +60,7 @@ const ProductTabs = ({
                 <strong className="font-semibold text-gray-900">
                   Danh mục:
                 </strong>{" "}
-                {product.category}
+                {product.category?.name || product.category}
               </p>
               <p>
                 <strong className="font-semibold text-gray-900">
@@ -162,61 +162,64 @@ const ProductTabs = ({
 
             <div className="space-y-6">
               {productReviews.length === 0 ? (
-                <p className="text-gray-500 italic text-center py-4">
-                  Chưa có đánh giá nào. Hãy là người đầu tiên!
-                </p>
+                <div className="text-center py-10 text-gray-400 font-medium italic">
+                  Chưa có đánh giá nào cho sản phẩm này. Hãy là người đầu tiên!
+                </div>
               ) : (
                 productReviews.map((review) => (
                   <div
-                    key={review.id}
-                    className="flex gap-4 pb-6 border-b border-gray-100 last:border-0"
+                    key={review._id}
+                    className="p-6 bg-white rounded-[2rem] border border-pink-50 mb-4 shadow-sm"
                   >
-                    <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-200 overflow-hidden border border-gray-100 flex items-center justify-center">
-                      {review.avatar ? (
-                        <img
-                          src={review.avatar}
-                          alt={review.customerName}
-                          className="h-full w-full object-cover"
-                        />
-                      ) : (
-                        <span className="text-gray-500 font-bold text-sm">
-                          {review.customerName?.[0] || (
-                            <User className="h-5 w-5" />
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="flex gap-3 items-center">
+                        <div className="w-10 h-10 bg-[#F7B5D5]/20 rounded-full flex items-center justify-center font-bold text-[#F7B5D5]">
+                          {review.user?.avatar ? (
+                            <img
+                              className="rounded-full"
+                              src={review.user?.avatar}
+                              alt="Avatar"
+                            />
+                          ) : (
+                            "U"
                           )}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Review Content */}
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-1">
-                        <h4 className="font-bold text-gray-900">
-                          {review.customerName}
-                        </h4>
-                        <span className="text-xs text-gray-400">
-                          {/* Nếu có ngày tháng thì hiển thị ở đây */}2 ngày
-                          trước
-                        </span>
+                        </div>
+                        <div>
+                          <p className="font-bold text-gray-800">
+                            {review.user?.name}
+                          </p>
+                          <div className="flex text-yellow-400">
+                            {Array.from({ length: 5 }).map((_, i) => (
+                              <Star
+                                key={i}
+                                size={12}
+                                fill={
+                                  i < review.rating ? "currentColor" : "none"
+                                }
+                              />
+                            ))}
+                          </div>
+                        </div>
                       </div>
-
-                      {/* Stars Display */}
-                      <div className="flex items-center gap-0.5 mb-2">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`h-3.5 w-3.5 ${
-                              i < Math.floor(review.rating)
-                                ? "fill-yellow-400 text-yellow-400"
-                                : "text-gray-300"
-                            }`}
-                          />
-                        ))}
-                      </div>
-
-                      <p className="text-sm text-gray-600 leading-relaxed">
-                        {review.comment}
-                      </p>
+                      <span className="text-xs text-gray-400 font-medium">
+                        {new Date(review.createdAt).toLocaleDateString("vi-VN")}
+                      </span>
                     </div>
+                    <p className="text-gray-600 leading-relaxed ml-13">
+                      {review.comment}
+                    </p>
+
+                    {/* Phản hồi của Admin */}
+                    {review.adminReply && (
+                      <div className="mt-4 ml-13 p-4 bg-pink-50/50 rounded-2xl border-l-4 border-[#F7B5D5]">
+                        <p className="text-xs font-black text-[#F7B5D5] uppercase mb-1 flex items-center gap-1">
+                          <MessageSquare size={12} /> SweetieBakery phản hồi:
+                        </p>
+                        <p className="text-sm text-gray-600 italic">
+                          {review.adminReply}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 ))
               )}

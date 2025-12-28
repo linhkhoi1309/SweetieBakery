@@ -1,10 +1,8 @@
 import { useEffect, useState, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
+import { Loader2, AlertCircle } from "lucide-react";
 import ProductCard from "./ProductCard";
-import { MOCK_FEATURED_PRODUCTS as mockProducts } from "../../../data/mockHomePageData.js";
-
-// Import API helper nếu có
-// import { http } from "../../../libs/http";
+import { http } from "../../../libs/http";
 
 const ProductList = ({
   searchQuery,
@@ -20,100 +18,67 @@ const ProductList = ({
 
   // Pagination states
   const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
   const currentPage = parseInt(searchParams.get("page") || "1");
-  const itemsPerPage = 6; // Số sản phẩm trên mỗi trang
+  const itemsPerPage = 6;
 
-  // --- LOGIC 1: REAL API QUERY STRING CONSTRUCTION (Commented Out for Future Use) ---
-  /*
+  // --- XÂY DỰNG QUERY STRING  ---
   const apiQueryString = useMemo(() => {
     const p = new URLSearchParams();
-    
-    // Filter params
-    if (selectedCategories.length > 0) p.set("categories", selectedCategories.join(","));
-    if (priceRange) {
-        p.set("minPrice", priceRange[0]);
-        p.set("maxPrice", priceRange[1]);
-    }
-    if (minRating > 0) p.set("minRating", minRating);
-    if (searchQuery) p.set("q", searchQuery);
 
-    // Pagination params
+    if (searchQuery) p.set("keyword", searchQuery);
+
+    if (selectedCategories.length > 0) {
+      p.set("category", selectedCategories[0]);
+    }
+
+    if (priceRange) {
+      p.set("priceGte", priceRange[0]);
+      p.set("priceLte", priceRange[1]);
+    }
+
     p.set("page", currentPage);
     p.set("limit", itemsPerPage);
 
     return p.toString();
-  }, [selectedCategories, priceRange, minRating, searchQuery, currentPage]);
-  */
+  }, [selectedCategories, priceRange, searchQuery, currentPage]);
 
-  // --- LOGIC 2: FETCH DATA & FILTER (Switchable) ---
+  // --- GỌI API ---
   useEffect(() => {
     let isMounted = true;
 
-    const loadProducts = async () => {
+    const fetchProducts = async () => {
       try {
         setIsLoading(true);
         setError(null);
 
-        // --- OPTION A: REAL API CALL (Future Use) ---
-        /*
         const res = await http.get(`/products?${apiQueryString}`);
+
         if (isMounted) {
-          setProducts(res.data.data);
-          setTotalPages(res.data.pages);
+          setProducts(res.data.products || []);
+          setTotalPages(res.data.totalPage || 1);
+          setTotalItems(res.data.totalItems || 0);
         }
-        */
-
-        // --- OPTION B: MOCK DATA PROCESSING (Current Use) ---
-        // Giả lập delay mạng
-        await new Promise((resolve) => setTimeout(resolve, 500));
-
-        // 1. Filter logic (Client-side filtering cho mock data)
-        let filtered = mockProducts.filter((product) => {
-          const matchesSearch = product.name
-            .toLowerCase()
-            .includes(searchQuery.toLowerCase());
-
-          const matchesCategory =
-            selectedCategories.length === 0 ||
-            selectedCategories.includes(product.category); // Đảm bảo field 'category' trong mockData khớp
-
-          const matchesPrice =
-            product.price >= priceRange[0] && product.price <= priceRange[1];
-
-          const matchesRating = product.rating >= minRating;
-
-          return (
-            matchesSearch && matchesCategory && matchesPrice && matchesRating
+      } catch (err) {
+        console.error("Error loading products:", err);
+        if (isMounted) {
+          setError(
+            err.response?.data?.message || "Không thể tải danh sách sản phẩm."
           );
-        });
-
-        // 2. Pagination logic (Client-side pagination cho mock data)
-        const totalItems = filtered.length;
-        const totalPagesCalc = Math.ceil(totalItems / itemsPerPage);
-        const startIndex = (currentPage - 1) * itemsPerPage;
-        const endIndex = startIndex + itemsPerPage;
-        const paginatedProducts = filtered.slice(startIndex, endIndex);
-
-        if (isMounted) {
-          setProducts(paginatedProducts);
-          setTotalPages(totalPagesCalc || 1);
         }
-      } catch (error) {
-        console.error("Error loading products:", error);
-        if (isMounted) setError("Không thể tải danh sách sản phẩm.");
       } finally {
         if (isMounted) setIsLoading(false);
       }
     };
 
-    loadProducts();
+    fetchProducts();
 
     return () => {
       isMounted = false;
     };
-  }, [searchQuery, selectedCategories, priceRange, minRating, currentPage]); // Dependency array bao gồm tất cả filter states
+  }, [apiQueryString]);
 
-  // --- HANDLERS ---
+  // --- XỬ LÝ CHUYỂN TRANG ---
   const handlePageChange = (newPage) => {
     if (newPage < 1 || newPage > totalPages) return;
 
@@ -121,7 +86,6 @@ const ProductList = ({
     nextParams.set("page", newPage);
     setSearchParams(nextParams);
 
-    // Scroll lên đầu trang khi chuyển trang
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -132,8 +96,10 @@ const ProductList = ({
         {Array.from({ length: 6 }).map((_, i) => (
           <div
             key={i}
-            className="h-[300px] w-full bg-gray-200 animate-pulse rounded-lg"
-          ></div>
+            className="h-[350px] w-full bg-pink-50/30 animate-pulse rounded-2xl border border-pink-100 flex items-center justify-center"
+          >
+            <Loader2 className="h-8 w-8 animate-spin text-[#F7B5D5]" />
+          </div>
         ))}
       </div>
     );
@@ -141,11 +107,12 @@ const ProductList = ({
 
   if (error) {
     return (
-      <div className="text-center py-16 text-red-500">
-        <p>{error}</p>
+      <div className="text-center py-16 border-2 border-dashed border-red-100 rounded-3xl bg-red-50/50">
+        <AlertCircle className="h-12 w-12 text-red-400 mx-auto mb-4" />
+        <p className="text-red-500 font-semibold">{error}</p>
         <button
           onClick={() => window.location.reload()}
-          className="mt-4 text-blue-600 underline"
+          className="mt-6 px-8 py-2 bg-white border border-red-200 rounded-full text-red-500 hover:bg-red-50 transition-all shadow-sm"
         >
           Thử lại
         </button>
@@ -155,60 +122,70 @@ const ProductList = ({
 
   return (
     <div className="flex-1">
-      {/* Meta Info */}
-      <div className="mb-4 text-sm text-muted-foreground">
-        {/* Note: Với API thật, số lượng này nên lấy từ res.data.total */}
-        Hiển thị {products.length} sản phẩm (Trang {currentPage}/{totalPages})
+      {/* Thông tin số lượng */}
+      <div className="mb-6 flex justify-between items-center text-sm font-medium">
+        <p className="text-gray-500">
+          Tìm thấy{" "}
+          <span className="text-[#F7B5D5] font-bold">{totalItems}</span> loại
+          bánh 🧁
+        </p>
+        <div className="px-3 py-1 bg-pink-50 text-[#F7B5D5] rounded-full">
+          Trang {currentPage} / {totalPages}
+        </div>
       </div>
 
       {products.length === 0 ? (
-        <div className="text-center py-16">
-          <p className="text-muted-foreground text-lg">
-            Không tìm thấy sản phẩm phù hợp
+        <div className="text-center py-24 bg-gray-50/50 rounded-[40px] border-2 border-dashed border-gray-200">
+          <p className="text-gray-400 text-xl font-medium">
+            Hiện chưa có loại bánh bạn tìm kiếm...
+          </p>
+          <p className="text-sm text-gray-400 mt-2">
+            Hãy thử thay đổi bộ lọc hoặc từ khóa khác nhé!
           </p>
         </div>
       ) : (
         <>
-          {/* Products Grid */}
+          {/* hiển thị sản phẩm */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard key={product._id} product={product} />
             ))}
           </div>
 
-          {/* Pagination Controls */}
+          {/* Điều khiển phân trang */}
           {totalPages > 1 && (
-            <div className="mt-8 flex justify-center gap-2">
+            <div className="mt-12 flex justify-center items-center gap-3">
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="px-4 py-2 border rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-5 py-2 rounded-2xl border border-pink-100 bg-white text-gray-500 hover:bg-pink-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all font-medium"
               >
                 Trước
               </button>
 
-              {/* Page Numbers */}
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                (page) => (
-                  <button
-                    key={page}
-                    onClick={() => handlePageChange(page)}
-                    className={`w-10 h-10 border rounded flex items-center justify-center transition-colors
+              <div className="flex gap-2">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (page) => (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      className={`w-11 h-11 rounded-2xl border transition-all font-bold text-sm
                     ${
                       currentPage === page
-                        ? "bg-[#F7B5D5] text-white "
-                        : "hover:bg-gray-100"
+                        ? "bg-[#F7B5D5] text-white border-[#F7B5D5] shadow-lg shadow-pink-100 scale-110"
+                        : "bg-white border-pink-100 text-gray-400 hover:border-[#F7B5D5] hover:text-[#F7B5D5]"
                     }`}
-                  >
-                    {page}
-                  </button>
-                )
-              )}
+                    >
+                      {page}
+                    </button>
+                  )
+                )}
+              </div>
 
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="px-4 py-2 border rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-5 py-2 rounded-2xl border border-pink-100 bg-white text-gray-500 hover:bg-pink-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all font-medium"
               >
                 Sau
               </button>
