@@ -183,6 +183,26 @@ export async function deactivateUserAccount(req, res) {
   }
 }
 
+// POST /users/active/:id (Private: Admin) - Kích hoạt lại tài khoản
+export async function activateUserAccount(req, res) {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id);
+    if (!user)
+      return res
+        .status(404)
+        .json({ success: false, message: "Không tìm thấy người dùng" });
+
+    user.isActive = true; // Chuyển về true
+    await user.save();
+    res
+      .status(200)
+      .json({ success: true, message: "Đã kích hoạt lại tài khoản", user });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
+
 // DELETE /users/:id (Private: Admin) - xóa hẳn tài khoản
 export async function deleteUserById(req, res) {
   try {

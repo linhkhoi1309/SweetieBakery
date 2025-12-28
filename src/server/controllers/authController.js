@@ -29,6 +29,14 @@ export async function login(req, res) {
       });
     }
 
+    if (!user.isActive) {
+      return res.status(403).json({
+        success: false,
+        message:
+          "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ Admin để biết thêm chi tiết.",
+      });
+    }
+
     const token = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET || "secret123",
@@ -195,6 +203,12 @@ export async function getMe(req, res) {
       return res
         .status(404)
         .json({ success: false, message: "Không tìm thấy người dùng" });
+    }
+
+    if (!user.isActive) {
+      return res
+        .status(403)
+        .json({ success: false, message: "Tài khoản đã bị vô hiệu hóa" });
     }
 
     res.status(200).json({

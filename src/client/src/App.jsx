@@ -31,17 +31,7 @@ import PromotionManagementPage from "./pages/admin/PromotionManagementPage";
 import ReviewManagementPage from "./pages/admin/ReviewManagementPage";
 import Account from "./pages/user/Account";
 import DashboardPage from "./pages/admin/DashboardPage";
-
-// Trang Dashboard mẫu để test
-const AdminDashboard = () => (
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-    <div className="bg-white p-6 rounded-3xl border border-pink-50 shadow-sm">
-      <p className="text-gray-500 text-sm">Doanh số hôm nay</p>
-      <h3 className="text-2xl font-black text-gray-800">5,420,000đ</h3>
-    </div>
-    {/* Các card khác... */}
-  </div>
-);
+import CustomerManagementPage from "./pages/admin/CustomerManagementPage";
 
 function App() {
   const { checkAuth, isCheckingAuth } = useAuthStore();
@@ -89,6 +79,7 @@ function App() {
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="products" element={<ProductManagementPage />} />
           <Route path="orders" element={<OrderManagementPage />} />
+          <Route path="customers" element={<CustomerManagementPage />} />
           <Route path="promotions" element={<PromotionManagementPage />} />
           <Route path="reviews" element={<ReviewManagementPage />} />
         </Route>
