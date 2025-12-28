@@ -184,3 +184,30 @@ export async function verifyEmail(req, res) {
       .json({ success: false, message: "Lỗi server", error: error.message });
   }
 }
+
+export async function getMe(req, res) {
+  try {
+    // Middleware xác thực (authMiddleware) sẽ giải mã token
+    // và gán thông tin user vào req.user
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Không tìm thấy người dùng" });
+    }
+
+    res.status(200).json({
+      success: true,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        avatar: user.avatar,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Lỗi server" });
+  }
+}
