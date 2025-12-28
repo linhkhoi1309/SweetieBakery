@@ -127,7 +127,7 @@ export const getAllReviewsAdmin = async (req, res) => {
     const filter = status ? { status } : {};
 
     const reviews = await Review.find(filter)
-      .populate("user", "name email")
+      .populate("user", "name email avatar")
       .populate("product", "name")
       .sort({ createdAt: -1 });
 

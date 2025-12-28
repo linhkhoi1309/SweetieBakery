@@ -174,7 +174,15 @@ const ProductTabs = ({
                     <div className="flex justify-between items-start mb-4">
                       <div className="flex gap-3 items-center">
                         <div className="w-10 h-10 bg-[#F7B5D5]/20 rounded-full flex items-center justify-center font-bold text-[#F7B5D5]">
-                          {review.user?.name?.charAt(0) || "U"}
+                          {review.user?.avatar ? (
+                            <img
+                              className="rounded-full"
+                              src={review.user?.avatar}
+                              alt="Avatar"
+                            />
+                          ) : (
+                            "U"
+                          )}
                         </div>
                         <div>
                           <p className="font-bold text-gray-800">

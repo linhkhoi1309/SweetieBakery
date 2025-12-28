@@ -42,6 +42,7 @@ const ReviewManagementPage = () => {
       setLoading(true);
       const res = await http.get("/reviews"); // Gọi đến reviewsRoutes.js (Admin)
       setReviews(res.data.data || []);
+      console.log(res.data.data);
     } catch (error) {
       toast.error("Không thể tải danh sách đánh giá");
     } finally {
@@ -156,7 +157,15 @@ const ReviewManagementPage = () => {
                     <td className="p-6">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center text-[#F7B5D5] font-black">
-                          {review.user?.name?.charAt(0) || "U"}
+                          {review.user?.avatar ? (
+                            <img
+                              className="rounded-full"
+                              src={review.user?.avatar}
+                              alt="Avatar"
+                            />
+                          ) : (
+                            "U"
+                          )}
                         </div>
                         <div>
                           <p className="font-bold text-gray-800">

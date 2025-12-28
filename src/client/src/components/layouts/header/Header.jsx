@@ -117,7 +117,7 @@ const Header = () => {
                           className="w-full text-left px-4 py-2 text-sm hover:bg-[#FFF0D9]/50 transition-colors"
                           onClick={() => {
                             setIsDropdownOpen(false);
-                            navigate("/user/profile");
+                            navigate("/user");
                           }}
                         >
                           Tài khoản của tôi
@@ -126,7 +126,7 @@ const Header = () => {
                           className="w-full text-left px-4 py-2 text-sm hover:bg-[#FFF0D9]/50 transition-colors"
                           onClick={() => {
                             setIsDropdownOpen(false);
-                            navigate("/user/profile");
+                            navigate("/user");
                           }}
                         >
                           Đơn hàng

@@ -29,6 +29,7 @@ import ProductManagementPage from "./pages/admin/ProductManagementPage";
 import OrderManagementPage from "./pages/admin/OrderManagementPage";
 import PromotionManagementPage from "./pages/admin/PromotionManagementPage";
 import ReviewManagementPage from "./pages/admin/ReviewManagementPage";
+import Account from "./pages/user/Account";
 
 // Trang Dashboard mẫu để test
 const AdminDashboard = () => (
@@ -70,6 +71,7 @@ function App() {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/order-tracking/:id" element={<OrderTrackingPage />} />
+          <Route path="/user" element={<Account />} />
         </Route>
 
         {/* --- ADMIN ROUTES --- */}
