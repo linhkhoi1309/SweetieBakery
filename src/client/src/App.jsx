@@ -28,6 +28,7 @@ import AdminRoute from "./layouts/admin/AdminRoute";
 import ProductManagementPage from "./pages/admin/ProductManagementPage";
 import OrderManagementPage from "./pages/admin/OrderManagementPage";
 import PromotionManagementPage from "./pages/admin/PromotionManagementPage";
+import ReviewManagementPage from "./pages/admin/ReviewManagementPage";
 
 // Trang Dashboard mẫu để test
 const AdminDashboard = () => (
@@ -86,6 +87,7 @@ function App() {
           <Route path="products" element={<ProductManagementPage />} />
           <Route path="orders" element={<OrderManagementPage />} />
           <Route path="promotions" element={<PromotionManagementPage />} />
+          <Route path="reviews" element={<ReviewManagementPage />} />
         </Route>
 
         {/* Auth Routes */}
