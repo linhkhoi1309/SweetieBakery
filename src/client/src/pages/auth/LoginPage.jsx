@@ -55,7 +55,7 @@ const LoginPage = () => {
             Username/Email
           </label>
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3  flex flex-col justify-center items-center">
+            <div className="absolute inset-y-0 left-0 pl-3  flex flex-col justify-center items-center pointer-events-none">
               <img className="w-5 h-5" src={mailIcon} alt="" />
             </div>
             <input
