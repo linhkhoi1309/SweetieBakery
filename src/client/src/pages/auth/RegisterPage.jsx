@@ -54,37 +54,33 @@ const RegisterPage = () => {
     }
   };
 
-  const handleLoginClick = () => {
-    navigate("/login");
-  };
-
   return (
-    <div className="w-full max-w-[70%] p-6 bg-white rounded-4xl shadow-2xl flex flex-col items-center justify-center">
-      {/* Title */}
-      <h2 className="mt-8 text-center text-4xl font-semibold">
-        Hello, Welcome to our page!
+    <div className="w-full bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-6 md:p-8 flex flex-col items-center my-4">
+      <h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-center">
+        Get Started
       </h2>
+      <p className="text-gray-500 mt-2 text-sm text-center">
+        Create your free account now
+      </p>
 
-      {/* Login Form */}
-      <form
-        className="mt-6 w-[80%] flex flex-col gap-y-3"
-        method="POST"
-        onSubmit={handleSubmit}
-      >
-        <div className="flex flex-col gap-y-1.5">
-          <label className="ml-2 font-bold" htmlFor="email">
-            Email
+      <form className="mt-6 w-full flex flex-col gap-4" onSubmit={handleSubmit}>
+        {/* Email */}
+        <div className="flex flex-col gap-1">
+          <label className="ml-1 font-semibold text-gray-700 text-xs md:text-sm">
+            Email Address
           </label>
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3  flex flex-col justify-center items-center">
-              <img className="w-5 h-5" src={mailIcon} alt="" />
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <img
+                className="w-5 h-5 opacity-40 group-focus-within:opacity-100 transition-opacity"
+                src={mailIcon}
+              />
             </div>
             <input
-              className="w-full pl-10 border rounded-md p-2 border-[#F88379]"
+              className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:border-[#F88379] focus:ring-4 focus:ring-[#F88379]/10 outline-none transition-all"
               name="email"
-              id="email"
               type="text"
-              placeholder="Enter your email"
+              placeholder="name@example.com"
               onChange={(e) =>
                 setFormData({ ...formData, email: e.target.value })
               }
@@ -92,20 +88,24 @@ const RegisterPage = () => {
             />
           </div>
         </div>
-        <div className="flex flex-col gap-y-1.5">
-          <label className="ml-2 font-bold" htmlFor="username">
+
+        {/* Username */}
+        <div className="flex flex-col gap-1">
+          <label className="ml-1 font-semibold text-gray-700 text-xs md:text-sm">
             Username
           </label>
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3  flex flex-col justify-center items-center">
-              <img className="w-5 h-5" src={mailIcon} alt="" />
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <img
+                className="w-5 h-5 opacity-40 group-focus-within:opacity-100 transition-opacity"
+                src={mailIcon}
+              />
             </div>
             <input
-              className="w-full pl-10 border rounded-md p-2 border-[#F88379]"
-              name="email"
-              id="email"
-              type="username"
-              placeholder="Enter your username"
+              className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:border-[#F88379] focus:ring-4 focus:ring-[#F88379]/10 outline-none transition-all"
+              name="username"
+              type="text"
+              placeholder="Choose a username"
               onChange={(e) =>
                 setFormData({ ...formData, username: e.target.value })
               }
@@ -113,21 +113,24 @@ const RegisterPage = () => {
             />
           </div>
         </div>
-        <div className="flex flex-col gap-y-1.5">
-          <label className="ml-2 font-bold" htmlFor="password">
+
+        {/* Password */}
+        <div className="flex flex-col gap-1">
+          <label className="ml-1 font-semibold text-gray-700 text-xs md:text-sm">
             Password
           </label>
-
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3  flex flex-col justify-center items-center">
-              <img className="w-5 h-5" src={blockIcon} alt="" />
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <img
+                className="w-5 h-5 opacity-40 group-focus-within:opacity-100 transition-opacity"
+                src={blockIcon}
+              />
             </div>
             <input
-              className="w-full pl-10 border rounded-md p-2 border-[#F88379]"
+              className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:border-[#F88379] focus:ring-4 focus:ring-[#F88379]/10 outline-none transition-all"
               name="password"
-              id="password"
               type={showPassword ? "text" : "password"}
-              placeholder="Enter your password"
+              placeholder="Create password"
               onChange={(e) =>
                 setFormData({ ...formData, password: e.target.value })
               }
@@ -135,21 +138,24 @@ const RegisterPage = () => {
             />
           </div>
         </div>
-        <div className="flex flex-col gap-y-1.5">
-          <label className="ml-2 font-bold" htmlFor="confirmedPassword">
-            Confirmed Password
-          </label>
 
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3  flex flex-col justify-center items-center">
-              <img className="w-5 h-5" src={blockIcon} alt="" />
+        {/* Confirm Password */}
+        <div className="flex flex-col gap-1">
+          <label className="ml-1 font-semibold text-gray-700 text-xs md:text-sm">
+            Confirm Password
+          </label>
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <img
+                className="w-5 h-5 opacity-40 group-focus-within:opacity-100 transition-opacity"
+                src={blockIcon}
+              />
             </div>
             <input
-              className="w-full pl-10 border rounded-md p-2 border-[#F88379]"
-              name="password"
-              id="confirmedPassword"
+              className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:border-[#F88379] focus:ring-4 focus:ring-[#F88379]/10 outline-none transition-all"
+              name="confirmedPassword"
               type={showPassword ? "text" : "password"}
-              placeholder="Enter your password"
+              placeholder="Confirm password"
               onChange={(e) =>
                 setFormData({ ...formData, confirmedPassword: e.target.value })
               }
@@ -157,47 +163,63 @@ const RegisterPage = () => {
             />
           </div>
         </div>
-        {!matchPassword ? (
-          <div className="ml-2 flex gap-x-2 items-center">
-            <img className="w-4 h-4" src={errorIcon} alt="" />
-            <p className="text-gray-400">Passwords do not match.</p>
-          </div>
-        ) : (
-          <></>
-        )}
-        <div className="flex gap-x-1">
-          <input
-            type="checkbox"
-            id="showPassword"
-            onChange={(e) => {
-              setShowPassword(e.target.checked);
-            }}
-          />
-          <label htmlFor="showPassword">Show password</label>
+
+        {/* Error & Show Password */}
+        <div className="flex justify-start items-center text-xs">
+          {!matchPassword ? (
+            <div className="flex gap-1 items-center text-red-500 animate-pulse">
+              <img className="w-3 h-3" src={errorIcon} /> Passwords do not match
+            </div>
+          ) : (
+            <div></div>
+          )}
+
+          <label className="flex items-center gap-2 cursor-pointer text-gray-600 hover:text-gray-900">
+            <input
+              type="checkbox"
+              className="accent-[#F88379] w-3.5 h-3.5"
+              onChange={(e) => setShowPassword(e.target.checked)}
+            />{" "}
+            Show password
+          </label>
         </div>
+
         <button
           type="submit"
-          className="mt-3 p-4 rounded-2xl text-white bg-[#F88379]"
+          className="mt-2 w-full py-3.5 rounded-xl text-white bg-[#F88379] font-bold text-lg hover:bg-[#ff7065] hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 active:scale-95"
         >
           Register
         </button>
 
-        <div className="text-[14px] flex gap-x-2">
-          <input type="checkbox" id="terms" required />
-          <label htmlFor="terms">
+        {/* Terms */}
+        <div className="flex gap-2 items-start justify-center">
+          <input
+            type="checkbox"
+            id="terms"
+            required
+            className="accent-[#F88379] mt-1"
+          />
+          <label
+            htmlFor="terms"
+            className="text-xs text-gray-500 leading-tight cursor-pointer"
+          >
             I agree to the{" "}
-            <span className="hover:underline hover:cursor-pointer">
+            <span className="text-[#F88379] font-semibold hover:underline">
               Terms of Service
+            </span>{" "}
+            &{" "}
+            <span className="text-[#F88379] font-semibold hover:underline">
+              Privacy Policy
             </span>
           </label>
         </div>
       </form>
 
-      <div className="mt-10 text-[14px]">
+      <div className="mt-6 text-sm text-gray-600">
         Already have an account?{" "}
         <span
-          onClick={handleLoginClick}
-          className="italic text-[#F88379] hover:cursor-pointer hover:underline"
+          onClick={() => navigate("/login")}
+          className="text-[#F88379] font-bold cursor-pointer hover:underline"
         >
           Login
         </span>
