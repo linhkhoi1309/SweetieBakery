@@ -37,11 +37,15 @@ const ProductList = ({
       p.set("priceLte", priceRange[1]);
     }
 
+    if (minRating > 0) {
+      p.set("ratingGte", minRating);
+    }
+
     p.set("page", currentPage);
     p.set("limit", itemsPerPage);
 
     return p.toString();
-  }, [selectedCategories, priceRange, searchQuery, currentPage]);
+  }, [selectedCategories, priceRange, minRating, searchQuery, currentPage]);
 
   // --- GỌI API ---
   useEffect(() => {

@@ -1,5 +1,7 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+
+import { ArrowLeft } from "lucide-react";
 
 import errorIcon from "../../assets/auth/mark.png";
 import mailIcon from "../../assets/auth/mail.png";
@@ -29,115 +31,118 @@ const LoginPage = () => {
     }
   };
 
-  const handleRegisterClick = () => {
-    navigate("/register");
-  };
-
-  const handleForgotPasswordClick = () => {
-    navigate("/forgot-password");
-  };
-
   return (
-    <div className="w-full max-w-[70%] p-6 bg-white rounded-4xl shadow-2xl flex flex-col items-center justify-center">
-      {/* Title */}
-      <h2 className="mt-16 text-center text-4xl font-semibold">
-        Hello, Welcome back!
-      </h2>
+    <div className="w-full bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-6 md:p-10 flex flex-col items-center">
+      {/* Header */}
+      <div className="text-center">
+        <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
+          Welcome Back!
+        </h2>
+        <p className="text-gray-500 mt-2 text-sm">
+          Please login to your account
+        </p>
+      </div>
 
-      {/* Login Form */}
+      {/* Form */}
       <form
-        className="mt-16 w-[70%] flex flex-col gap-y-3"
-        method="POST"
+        className="mt-6 md:mt-8 w-full flex flex-col gap-4"
         onSubmit={handleSubmit}
       >
-        <div className="flex flex-col gap-y-1.5">
-          <label className="ml-2 font-bold" htmlFor="email">
-            Username/Email
+        {/* Email */}
+        <div className="flex flex-col gap-1.5">
+          <label className="ml-1 font-semibold text-gray-700 text-sm">
+            Email
           </label>
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3  flex flex-col justify-center items-center pointer-events-none">
-              <img className="w-5 h-5" src={mailIcon} alt="" />
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <img
+                className="w-5 h-5 opacity-40 group-focus-within:opacity-100 transition-opacity"
+                src={mailIcon}
+                alt=""
+              />
             </div>
             <input
-              className="w-full pl-10 border rounded-md p-2 border-[#F88379]"
-              name="email"
-              id="email"
+              className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:border-[#F88379] focus:ring-4 focus:ring-[#F88379]/10 outline-none transition-all"
               type="text"
               placeholder="Enter your email"
+              required
               onChange={(e) =>
                 setFormData({ ...formData, email: e.target.value })
               }
-              required
             />
           </div>
         </div>
-        <div className="flex flex-col gap-y-1.5">
-          <label className="ml-2 font-bold" htmlFor="password">
+
+        {/* Password */}
+        <div className="flex flex-col gap-1.5">
+          <label className="ml-1 font-semibold text-gray-700 text-sm">
             Password
           </label>
-
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3  flex flex-col justify-center items-center">
-              <img className="w-5 h-5" src={blockIcon} alt="" />
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <img
+                className="w-5 h-5 opacity-40 group-focus-within:opacity-100 transition-opacity"
+                src={blockIcon}
+                alt=""
+              />
             </div>
             <input
-              className="w-full pl-10 border rounded-md p-2 border-[#F88379]"
-              name="password"
-              id="password"
+              className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:border-[#F88379] focus:ring-4 focus:ring-[#F88379]/10 outline-none transition-all"
               type={showPassword ? "text" : "password"}
-              placeholder="Enter your password"
+              placeholder="••••••••"
+              required
               onChange={(e) =>
                 setFormData({ ...formData, password: e.target.value })
               }
-              required
             />
           </div>
-          {wrongPassword ? (
-            <div className="ml-2 flex gap-x-2 items-center">
-              <img className="w-4 h-4" src={errorIcon} alt="" />
-              <p className="text-gray-400">Wrong password</p>
-            </div>
-          ) : (
-            <></>
-          )}
-          <div className="flex gap-x-1">
-            <input
-              type="checkbox"
-              id="showPassword"
-              onChange={(e) => {
-                setShowPassword(e.target.checked);
-              }}
-            />
-            <label htmlFor="showPassword">Show password</label>
+
+          <div className="flex justify-start items-center mt-1">
+            {wrongPassword ? (
+              <span className="text-red-500 text-xs flex items-center gap-1">
+                <img src={errorIcon} className="w-3 h-3" /> Wrong password
+              </span>
+            ) : (
+              <span></span>
+            )}
+            <label className="flex items-center gap-2 cursor-pointer text-xs text-gray-500 hover:text-gray-700">
+              <input
+                type="checkbox"
+                className="accent-[#F88379]"
+                onChange={(e) => setShowPassword(e.target.checked)}
+              />{" "}
+              Show password
+            </label>
           </div>
         </div>
+
         <button
           type="submit"
-          className="mt-6 p-4 rounded-2xl text-white bg-[#F88379]"
+          className="w-full py-3.5 rounded-xl text-white bg-[#F88379] font-bold text-lg hover:bg-[#ff7065] hover:shadow-lg hover:-translate-y-0.5 transition-all active:scale-95"
         >
           Login
         </button>
       </form>
 
-      <div className="mt-2 text-[14px]">
-        Forgot your password?{" "}
-        <span
-          onClick={handleForgotPasswordClick}
-          className="italic text-[#F88379] hover:cursor-pointer hover:underline"
-        >
-          Reset password
-        </span>
+      <div className="mt-6 flex flex-col items-center gap-3 text-sm text-gray-600">
+        <div>
+          Don't have an account?{" "}
+          <span
+            onClick={() => navigate("/register")}
+            className="text-[#F88379] font-bold cursor-pointer hover:underline"
+          >
+            Register now
+          </span>
+        </div>
       </div>
 
-      <div className="mt-10 text-[14px]">
-        Don't have an account?{" "}
-        <span
-          onClick={handleRegisterClick}
-          className="italic text-[#F88379] hover:cursor-pointer hover:underline"
-        >
-          Register
-        </span>
-      </div>
+      <Link
+        to="/"
+        className="mt-6 flex items-center gap-2 text-sm text-gray-500 hover:text-[#F88379] transition-colors group font-medium"
+      >
+        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+        Back to Home Page
+      </Link>
     </div>
   );
 };

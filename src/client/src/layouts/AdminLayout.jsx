@@ -27,8 +27,6 @@ const AdminLayout = () => {
     { href: "/admin/customers", label: "Khách hàng", icon: Users },
     { href: "/admin/reviews", label: "Đánh giá", icon: MessageSquare },
     { href: "/admin/promotions", label: "Khuyến mãi", icon: Tag },
-    { href: "/admin/logs", label: "System Logs", icon: FileText },
-    { href: "/admin/backup", label: "Backup DB", icon: Database },
   ];
 
   const handleLogout = () => {

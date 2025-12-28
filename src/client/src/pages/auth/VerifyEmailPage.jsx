@@ -69,57 +69,58 @@ const VerifyEmailPage = () => {
   }, [code]);
 
   return (
-    <div className="max-w-[70%] p-10 bg-white rounded-4xl shadow-2xl">
-      <div className="flex flex-col items-start justify-center">
-        <div className="flex flex-col gap-y-1">
-          {/* Title */}
-          <h2 className="text-3xl font-semibold">Verify Your Email</h2>
-          {/* Sub-title */}
-          <p className="text-gray-500">
-            Enter the 6-digit code sent to your email
-          </p>
+    <div className="w-full bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-6 md:p-10 flex flex-col items-center text-center">
+      <div className="flex flex-col gap-2">
+        <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
+          Verify Email
+        </h2>
+        <p className="text-gray-500 text-sm">
+          We've sent a 6-digit code to your email.
+          <br className="hidden md:block" /> Please enter it below.
+        </p>
+      </div>
+
+      <form
+        className="mt-8 flex flex-col gap-6 w-full"
+        onSubmit={handleVerifyCode}
+      >
+        {/* Input Grid: Responsive spacing */}
+        <div className="flex justify-between gap-1 md:gap-3">
+          {code.map((digit, index) => (
+            <input
+              key={index}
+              ref={(el) => (inputRefs.current[index] = el)}
+              type="text"
+              maxLength={1}
+              value={digit}
+              onChange={(e) => handleChange(index, e.target.value)}
+              onKeyDown={(e) => handleKeyDown(index, e)}
+              // Mobile: w-10 h-12 | Desktop: w-12 h-14
+              className="w-10 h-12 md:w-12 md:h-14 text-center text-xl md:text-2xl font-bold bg-gray-200 rounded-lg border-2 border-gray-200 focus:border-[#F88379] focus:ring-4 focus:ring-[#F88379]/10 outline-none transition-all"
+              required
+              inputMode="numeric"
+            />
+          ))}
         </div>
 
-        <form className="mt-8 flex flex-col gap-4" onSubmit={handleVerifyCode}>
-          <div className="flex gap-4">
-            {code.map((digit, index) => (
-              <input
-                key={index}
-                ref={(el) => {
-                  if (el) inputRefs.current[index] = el;
-                }}
-                type="text"
-                maxLength={1}
-                value={digit}
-                onChange={(e) => handleChange(index, e.target.value)}
-                onKeyDown={(e) => handleKeyDown(index, e)}
-                className="size-12 text-center text-2xl font-bold bg-gray-400/50 rounded-lg border-2 border-gray-700 focus-visible:ring-2 focus-visible:ring-black/50"
-                required
-              />
-            ))}
-          </div>
-
-          <div className="text-sm flex gap-x-2 items-center justify-center">
-            Didn't receive the code?
-            <button
-              className="text-[#F88379] hover:underline hover:cursor-pointer"
-              onClick={handleResendCode}
-            >
-              Resend
-            </button>
-          </div>
-
+        <div className="text-sm flex gap-x-2 items-center justify-center text-gray-600">
+          Didn't receive code?
           <button
-            type="submit"
-            className="w-full py-2 px-4 text-white bg-[#F88379] font-bold text-lg rounded-lg cursor-pointer disabled:cursor-not-allowed"
-            disabled={code.some((digit) => !digit)}
+            className="text-[#F88379] font-bold hover:underline"
+            onClick={handleResendCode}
           >
-            Verify Email
+            Resend
           </button>
-        </form>
+        </div>
 
-        <form action=""></form>
-      </div>
+        <button
+          type="submit"
+          className="w-full py-3.5 rounded-xl text-white bg-[#F88379] font-bold text-lg hover:bg-[#ff7065] hover:shadow-lg hover:-translate-y-0.5 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={code.some((digit) => !digit)}
+        >
+          Verify Email
+        </button>
+      </form>
     </div>
   );
 };

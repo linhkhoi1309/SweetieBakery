@@ -21,7 +21,7 @@ const parseNumber = (value, fallback) => {
 
 export async function getAllProducts(req, res) {
   try {
-    const { keyword, category, sort = "-createdAt" } = req.query;
+    const { keyword, category, ratingGte, sort = "-createdAt" } = req.query;
 
     const page = Math.max(1, parseInt(req.query.page, 10) || 1);
     const limit = Math.max(1, parseInt(req.query.limit, 10) || 12);
@@ -39,6 +39,10 @@ export async function getAllProducts(req, res) {
           .json({ success: false, message: "Category ID không hợp lệ" });
       }
       filter.category = category;
+    }
+
+    if (ratingGte) {
+      filter.rating = { $gte: Number(ratingGte) };
     }
 
     const priceFilter = {};
@@ -73,13 +77,11 @@ export async function getAllProducts(req, res) {
     });
   } catch (error) {
     console.error("getAllProducts error:", error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "Không thể lấy danh sách sản phẩm",
-        error: error.message,
-      });
+    res.status(500).json({
+      success: false,
+      message: "Không thể lấy danh sách sản phẩm",
+      error: error.message,
+    });
   }
 }
 
@@ -107,13 +109,11 @@ export async function getProductById(req, res) {
     res.status(200).json({ success: true, data: product });
   } catch (error) {
     console.error("getProductById error:", error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "Không thể lấy chi tiết sản phẩm",
-        error: error.message,
-      });
+    res.status(500).json({
+      success: false,
+      message: "Không thể lấy chi tiết sản phẩm",
+      error: error.message,
+    });
   }
 }
 
@@ -175,22 +175,18 @@ export async function createProduct(req, res) {
       images: normalizedImages,
     });
 
-    res
-      .status(201)
-      .json({
-        success: true,
-        message: "Tạo sản phẩm thành công",
-        data: product,
-      });
+    res.status(201).json({
+      success: true,
+      message: "Tạo sản phẩm thành công",
+      data: product,
+    });
   } catch (error) {
     console.error("createProduct error:", error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "Không thể tạo sản phẩm",
-        error: error.message,
-      });
+    res.status(500).json({
+      success: false,
+      message: "Không thể tạo sản phẩm",
+      error: error.message,
+    });
   }
 }
 
@@ -225,12 +221,10 @@ export async function updateProduct(req, res) {
     } = req.body || {};
 
     if (isDeleted !== undefined) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Không thể chỉnh sửa trạng thái xóa bằng API này",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Không thể chỉnh sửa trạng thái xóa bằng API này",
+      });
     }
 
     if (name?.trim()) {
@@ -309,22 +303,18 @@ export async function updateProduct(req, res) {
 
     await product.save();
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Cập nhật sản phẩm thành công",
-        data: product,
-      });
+    res.status(200).json({
+      success: true,
+      message: "Cập nhật sản phẩm thành công",
+      data: product,
+    });
   } catch (error) {
     console.error("updateProduct error:", error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "Không thể cập nhật sản phẩm",
-        error: error.message,
-      });
+    res.status(500).json({
+      success: false,
+      message: "Không thể cập nhật sản phẩm",
+      error: error.message,
+    });
   }
 }
 
@@ -349,21 +339,17 @@ export async function deleteProduct(req, res) {
     product.isDeleted = true;
     await product.save();
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Đã xóa sản phẩm",
-        data: { id: product._id },
-      });
+    res.status(200).json({
+      success: true,
+      message: "Đã xóa sản phẩm",
+      data: { id: product._id },
+    });
   } catch (error) {
     console.error("deleteProduct error:", error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "Không thể xóa sản phẩm",
-        error: error.message,
-      });
+    res.status(500).json({
+      success: false,
+      message: "Không thể xóa sản phẩm",
+      error: error.message,
+    });
   }
 }
