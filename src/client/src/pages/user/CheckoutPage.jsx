@@ -12,7 +12,8 @@ import { http } from "../../libs/http";
 const CheckoutPage = () => {
   const navigate = useNavigate();
 
-  const { cart, clearCart, shippingFee, discount, finalTotal } = useCart();
+  const { cart, clearCart, shippingFee, discount, finalTotal, appliedVoucher } =
+    useCart();
   const [isSubmitting, setIsSubmitting] = useState(false); // State loading
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
@@ -70,6 +71,7 @@ const CheckoutPage = () => {
         shippingPrice: shippingFee,
         discountAmount: discount, // Lấy từ CartContext
         totalPrice: finalTotal, // Tổng tiền cuối cùng
+        couponCode: appliedVoucher ? appliedVoucher.code : null,
       };
 
       // Gọi API POST /orders

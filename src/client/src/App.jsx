@@ -27,6 +27,7 @@ import AdminLayout from "./layouts/AdminLayout";
 import AdminRoute from "./layouts/admin/AdminRoute";
 import ProductManagementPage from "./pages/admin/ProductManagementPage";
 import OrderManagementPage from "./pages/admin/OrderManagementPage";
+import PromotionManagementPage from "./pages/admin/PromotionManagementPage";
 
 // Trang Dashboard mẫu để test
 const AdminDashboard = () => (
@@ -46,8 +47,6 @@ function App() {
     checkAuth(); // Gọi hàm kiểm tra ngay khi mở app
   }, [checkAuth]);
 
-  // Nếu đang kiểm tra auth ở mức toàn cục, có thể hiện loading ở đây
-  // để tránh việc các route bên dưới bị render nhầm trạng thái
   if (isCheckingAuth)
     return (
       <div className="flex items-center justify-center h-screen bg-pink-50">
@@ -86,6 +85,7 @@ function App() {
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="products" element={<ProductManagementPage />} />
           <Route path="orders" element={<OrderManagementPage />} />
+          <Route path="promotions" element={<PromotionManagementPage />} />
         </Route>
 
         {/* Auth Routes */}

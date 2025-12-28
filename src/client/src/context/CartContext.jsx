@@ -10,6 +10,7 @@ export const CartProvider = ({ children }) => {
   });
   const [appliedVoucher, setAppliedVoucher] = useState(null);
 
+  // Lưu giỏ hàng vào LocalStorage mỗi khi có thay đổi
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
@@ -18,15 +19,15 @@ export const CartProvider = ({ children }) => {
     setCart((prev) => {
       const exist = prev.find((i) => i._id === product._id);
 
-      // Lấy giá thực tế (ưu tiên priceSale nếu > 0)
+      // Lấy giá thực tế (ưu tiên giá khuyến mãi priceSale nếu có)
       const actualPrice =
         product.priceSale > 0 ? product.priceSale : product.price;
 
-      // Lấy ảnh đầu tiên từ mảng images
+      // Chuẩn hóa ảnh: lấy ảnh đầu tiên từ mảng images (cấu trúc MongoDB)
       const displayImage =
         product.images && product.images.length > 0
           ? product.images[0].url
-          : product.image; // fallback nếu đã có trường image sẵn
+          : product.image;
 
       if (exist) {
         return prev.map((i) =>
@@ -39,8 +40,8 @@ export const CartProvider = ({ children }) => {
           ...prev,
           {
             ...product,
-            price: actualPrice, // Lưu giá tại thời điểm thêm vào giỏ
-            image: displayImage, // Lưu URL ảnh vào trường image để dễ gọi ở CartPage
+            price: actualPrice,
+            image: displayImage,
             quantity: Math.min(qty, 10),
           },
         ];
@@ -66,43 +67,52 @@ export const CartProvider = ({ children }) => {
     localStorage.removeItem("cart");
   };
 
+  // 1. Tính tổng số lượng sản phẩm
   const totalItems = useMemo(
     () => cart.reduce((acc, cur) => acc + cur.quantity, 0),
     [cart]
   );
 
+  // 2. Tính tổng tiền hàng (chưa trừ voucher, chưa cộng ship)
   const subTotal = useMemo(
     () => cart.reduce((acc, cur) => acc + cur.price * cur.quantity, 0),
     [cart]
   );
 
-  const applyVoucher = (voucher) => {
-    setAppliedVoucher(voucher);
-  };
-
-  const removeVoucher = () => {
-    setAppliedVoucher(null);
-  };
-
-  const subtotal = cart.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0
-  );
   const shippingFee = 30000;
 
-  let discount = 0;
-  if (appliedVoucher) {
-    if (appliedVoucher.code === "FREESHIP") {
-      discount = shippingFee;
-    } else {
-      discount = subtotal * appliedVoucher.discount;
-    }
-  }
+  // 3. Tính toán số tiền được giảm dựa trên Coupon thực tế
+  const discount = useMemo(() => {
+    if (!appliedVoucher) return 0;
 
-  const finalTotal =
-    subtotal +
-    (appliedVoucher?.code === "FREESHIP" ? 0 : shippingFee) -
-    discount;
+    // Logic xử lý đặc biệt cho mã FREESHIP cũ (nếu bạn vẫn muốn dùng)
+    if (appliedVoucher.code === "FREESHIP") return shippingFee;
+
+    const { discountType, discountValue, maxDiscountAmount } = appliedVoucher;
+    let amount = 0;
+
+    if (discountType === "percent") {
+      amount = (subTotal * discountValue) / 100;
+      // Áp dụng giới hạn giảm tối đa (nếu có)
+      if (maxDiscountAmount && amount > maxDiscountAmount) {
+        amount = maxDiscountAmount;
+      }
+    } else if (discountType === "fixed") {
+      // Giảm số tiền cố định (VD: 50.000đ)
+      amount = discountValue;
+    }
+
+    // Tiền giảm không được vượt quá tổng giá trị đơn hàng
+    return Math.min(amount, subTotal);
+  }, [appliedVoucher, subTotal]);
+
+  // 4. Tổng thanh toán cuối cùng
+  const finalTotal = useMemo(() => {
+    return subTotal + shippingFee - discount;
+  }, [subTotal, shippingFee, discount]);
+
+  const applyVoucher = (voucher) => setAppliedVoucher(voucher);
+  const removeVoucher = () => setAppliedVoucher(null);
 
   return (
     <CartContext.Provider
