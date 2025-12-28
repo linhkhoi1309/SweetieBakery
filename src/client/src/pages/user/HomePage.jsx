@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import { ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+
+import { ArrowRight } from "lucide-react";
 
 import { http } from "../../libs/http.js";
 
@@ -24,6 +26,8 @@ const HomePage = () => {
   const [promotions, setPromotions] = useState([]);
   const [copiedCode, setCopiedCode] = useState(null);
   const [reviews, setReviews] = useState([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchHomeData = async () => {
@@ -112,7 +116,7 @@ const HomePage = () => {
                 size="lg"
                 variant="secondary"
                 className="bg-white text-[#F7B5D5] hover:bg-white/80 hover:cursor-pointer"
-                onClick={() => (window.location.href = "/products")}
+                onClick={() => navigate("/products")}
               >
                 Khám phá menu
                 <ArrowRight className="ml-2 h-5 w-5" />
