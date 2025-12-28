@@ -26,6 +26,7 @@ import OrderTrackingPage from "./pages/user/OrderTrackingPage";
 import AdminLayout from "./layouts/AdminLayout";
 import AdminRoute from "./layouts/admin/AdminRoute";
 import ProductManagementPage from "./pages/admin/ProductManagementPage";
+import OrderManagementPage from "./pages/admin/OrderManagementPage";
 
 // Trang Dashboard mẫu để test
 const AdminDashboard = () => (
@@ -84,7 +85,7 @@ function App() {
           <Route index element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="products" element={<ProductManagementPage />} />
-          {/* Thêm các Route admin khác ở đây */}
+          <Route path="orders" element={<OrderManagementPage />} />
         </Route>
 
         {/* Auth Routes */}

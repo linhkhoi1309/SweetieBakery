@@ -1,188 +1,202 @@
+import { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
 import {
-  Check,
   CheckCircle2,
   Clock,
   MapPin,
   Package,
   Truck,
+  Loader2,
+  AlertCircle,
 } from "lucide-react";
-import { useParams, Link } from "react-router-dom";
+import { http } from "../../libs/http.js";
+import moment from "moment";
 
 const OrderTrackingPage = () => {
-  const params = useParams();
-  const orderID = params?.id || null;
+  const { id: orderID } = useParams();
+  const [order, setOrder] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  console.log(orderID);
+  // Mapping trạng thái Backend sang UI
+  const statusStepMap = {
+    Pending: 1, // Chờ xử lý
+    Processing: 2, // Đang làm bánh
+    Shipping: 3, // Đang giao
+    Delivered: 4, // Đã giao
+    Cancelled: 0, // Đã hủy
+  };
 
-  // Mock status - Trong thực tế sẽ lấy từ API/Context
-  const currentStatus = "baking"; // pending, confirmed, baking, shipping, completed
+  useEffect(() => {
+    const fetchOrder = async () => {
+      try {
+        const res = await http.get(`/orders/${orderID}`);
+        setOrder(res.data.data);
+      } catch (err) {
+        setError("Không tìm thấy đơn hàng này.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    if (orderID) fetchOrder();
+  }, [orderID]);
 
-  const statuses = [
+  if (isLoading)
+    return (
+      <div className="flex justify-center py-20">
+        <Loader2 className="animate-spin h-10 w-10 text-[#F7B5D5]" />
+      </div>
+    );
+
+  if (error || !order)
+    return (
+      <div className="text-center py-20">
+        <AlertCircle className="h-16 w-16 text-red-400 mx-auto mb-4" />
+        <h2 className="text-2xl font-bold text-gray-800">{error}</h2>
+        <Link to="/" className="text-[#F7B5D5] underline mt-4 block">
+          Quay về trang chủ
+        </Link>
+      </div>
+    );
+
+  const currentStep = statusStepMap[order.status] || 1;
+  const isCancelled = order.status === "Cancelled";
+
+  // Định nghĩa các bước hiển thị
+  const steps = [
+    { id: 1, title: "Đã đặt hàng", icon: Clock, time: order.createdAt },
+    { id: 2, title: "Đang chuẩn bị", icon: Package, time: null }, // Có thể thêm trường updatedAt nếu muốn
+    { id: 3, title: "Đang giao hàng", icon: Truck, time: null },
     {
-      id: "pending",
-      title: "Chờ xử lý",
-      description: "Đơn hàng đã được tiếp nhận",
-      icon: Clock,
-      date: "12/11/2024 10:30",
-    },
-    {
-      id: "confirmed",
-      title: "Đã xác nhận",
-      description: "Đơn hàng đã được xác nhận",
+      id: 4,
+      title: "Giao thành công",
       icon: CheckCircle2,
-      date: "12/11/2024 10:45",
-    },
-    {
-      id: "baking",
-      title: "Đang làm bánh",
-      description: "Đầu bếp đang chuẩn bị bánh của bạn",
-      icon: Package,
-      date: "12/11/2024 11:00",
-    },
-    {
-      id: "shipping",
-      title: "Đang giao hàng",
-      description: "Đơn hàng đang trên đường giao đến bạn",
-      icon: Truck,
-      date: "",
-    },
-    {
-      id: "completed",
-      title: "Hoàn thành",
-      description: "Đơn hàng đã được giao thành công",
-      icon: Check,
-      date: "",
+      time: order.deliveredAt,
     },
   ];
 
-  const getStatusIndex = () => {
-    return statuses.findIndex((s) => s.id === currentStatus);
-  };
-
-  const currentIndex = getStatusIndex();
-
   return (
-    <div className="container mx-auto px-4 py-12">
-      {/* Thay thế Card bằng div custom theo style SweetieBakery */}
-      <div className="max-w-2xl mx-auto bg-white rounded-[2.5rem] border-2 border-pink-50 shadow-xl shadow-pink-100/50 overflow-hidden">
-        {/* Header của trang tracking */}
-        <div className="bg-[#F7B5D5]/10 p-8 text-center border-b border-pink-50">
-          <div className="w-20 h-20 bg-white rounded-3xl shadow-sm flex items-center justify-center mx-auto mb-4 border border-pink-100">
-            <Package className="h-10 w-10 text-[#F7B5D5]" />
+    <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="bg-white rounded-3xl shadow-xl border border-pink-50 overflow-hidden">
+        {/* Header */}
+        <div className="bg-[#F7B5D5]/10 p-6 border-b border-pink-100 flex justify-between items-center">
+          <div>
+            <p className="text-sm text-gray-500">Mã đơn hàng</p>
+            <h1 className="text-xl md:text-2xl font-bold text-gray-800">
+              #{order._id.slice(-6).toUpperCase()}
+            </h1>
           </div>
-          <h1 className="text-3xl font-black text-gray-800 mb-2">
-            Theo Dõi Đơn Hàng
-          </h1>
-          <p className="text-gray-500 font-medium">
-            Mã đơn hàng:{" "}
-            <span className="text-[#F7B5D5] font-bold">#{orderID}</span>
-          </p>
+          <div
+            className={`px-4 py-1 rounded-full text-sm font-bold ${
+              isCancelled
+                ? "bg-red-100 text-red-600"
+                : "bg-green-100 text-green-600"
+            }`}
+          >
+            {isCancelled ? "Đã hủy" : order.status}
+          </div>
         </div>
 
-        <div className="p-8 sm:p-10">
-          {/* Danh sách các trạng thái (Progress Stepper) */}
-          <div className="space-y-10 relative">
-            {statuses.map((status, index) => {
-              const Icon = status.icon;
-              const isCompleted = index <= currentIndex;
-              const isCurrent = index === currentIndex;
+        <div className="p-6 md:p-10">
+          {/* Progress Bar */}
+          {!isCancelled ? (
+            <div className="relative mb-12">
+              <div className="absolute top-1/2 left-0 w-full h-1 bg-gray-200 -translate-y-1/2 z-0"></div>
+              <div
+                className="absolute top-1/2 left-0 h-1 bg-[#F7B5D5] -translate-y-1/2 z-0 transition-all duration-500"
+                style={{ width: `${((currentStep - 1) / 3) * 100}%` }}
+              ></div>
 
-              return (
-                <div key={status.id} className="relative flex gap-6">
-                  {/* Đường kẻ nối giữa các icon */}
-                  {index < statuses.length - 1 && (
+              <div className="relative z-10 flex justify-between w-full">
+                {steps.map((step) => {
+                  const isActive = currentStep >= step.id;
+                  const Icon = step.icon;
+                  return (
                     <div
-                      className={`absolute left-6 top-14 w-0.5 h-12 transition-colors duration-500 ${
-                        index < currentIndex ? "bg-[#F7B5D5]" : "bg-gray-100"
-                      }`}
-                    />
-                  )}
-
-                  {/* Icon trạng thái */}
-                  <div
-                    className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 border-2 transition-all duration-500 z-10 ${
-                      isCompleted
-                        ? "bg-[#F7B5D5] border-[#F7B5D5] text-white shadow-lg shadow-pink-200"
-                        : "bg-white border-gray-200 text-gray-300"
-                    } ${isCurrent ? "ring-4 ring-pink-100 animate-pulse" : ""}`}
-                  >
-                    <Icon className="h-6 w-6" />
-                  </div>
-
-                  {/* Nội dung trạng thái */}
-                  <div className="flex-1 pt-1">
-                    <div className="flex items-center justify-between mb-1">
-                      <h3
-                        className={`font-bold transition-colors ${
-                          isCompleted ? "text-gray-800" : "text-gray-400"
+                      key={step.id}
+                      className="flex flex-col items-center gap-2"
+                    >
+                      <div
+                        className={`w-10 h-10 rounded-full flex items-center justify-center border-4 transition-all duration-300 ${
+                          isActive
+                            ? "bg-[#F7B5D5] border-[#F7B5D5] text-white"
+                            : "bg-white border-gray-200 text-gray-400"
                         }`}
                       >
-                        {status.title}
-                      </h3>
-                      {status.date && (
-                        <span className="text-xs font-medium text-gray-400 bg-gray-50 px-2 py-1 rounded-lg">
-                          {status.date}
-                        </span>
+                        <Icon className="w-5 h-5" />
+                      </div>
+                      <p
+                        className={`text-xs md:text-sm font-bold ${
+                          isActive ? "text-gray-800" : "text-gray-400"
+                        }`}
+                      >
+                        {step.title}
+                      </p>
+                      {step.time && (
+                        <p className="text-[10px] text-gray-500">
+                          {moment(step.time).format("HH:mm DD/MM")}
+                        </p>
                       )}
                     </div>
-                    <p className="text-sm text-gray-500 leading-relaxed">
-                      {status.description}
-                    </p>
-
-                    {isCurrent && status.id !== "completed" && (
-                      <div className="mt-2 inline-flex items-center gap-2 text-xs font-bold text-[#F7B5D5] uppercase tracking-wider">
-                        <span className="relative flex h-2 w-2">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-2 w-2 bg-[#F7B5D5]"></span>
-                        </span>
-                        Đang thực hiện
-                      </div>
-                    )}
-
-                    {isCurrent && status.id === "completed" && (
-                      <div className="mt-2 inline-flex items-center gap-2 text-xs font-bold text-green-600 uppercase tracking-wider">
-                        <span className="relative flex h-2 w-2">
-                          <span className="relative inline-flex rounded-full h-2 w-2 bg-green-600"></span>
-                        </span>
-                        Đã hoàn thành
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Thông tin giao hàng */}
-          <div className="mt-12 pt-8 border-t border-dashed border-pink-100 space-y-6">
-            <div className="bg-[#FFF0D9]/40 p-6 rounded-4xl border border-[#FFF0D9] relative overflow-hidden">
-              <div className="absolute top-0 right-0 p-4 opacity-10">
-                <MapPin className="w-12 h-12 text-[#f39c12]" />
+                  );
+                })}
               </div>
-              <h4 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
-                🏠 Thông tin nhận hàng
-              </h4>
-              <div className="text-sm text-gray-600 space-y-2 relative z-10">
-                <p className="font-bold text-gray-700">Nguyễn Văn A</p>
-                <p className="flex items-center gap-2">📞 0123 456 789</p>
-                <p className="flex items-start gap-2 italic">
-                  📍 123 Đường ABC, Quận 1, TP.HCM
-                </p>
+            </div>
+          ) : (
+            <div className="text-center py-8 mb-8 bg-red-50 rounded-xl border border-red-100 text-red-600">
+              Đơn hàng này đã bị hủy. Vui lòng liên hệ CSKH nếu có nhầm lẫn.
+            </div>
+          )}
+
+          {/* Chi tiết đơn hàng & Người nhận */}
+          <div className="grid md:grid-cols-2 gap-8">
+            <div>
+              <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <Package className="w-5 h-5 text-[#F7B5D5]" /> Sản phẩm
+              </h3>
+              <div className="space-y-4">
+                {order.orderItems.map((item, idx) => (
+                  <div key={idx} className="flex gap-4 items-center">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-16 h-16 rounded-lg object-cover border border-gray-100"
+                    />
+                    <div>
+                      <p className="font-bold text-gray-800">{item.name}</p>
+                      <p className="text-sm text-gray-500">
+                        x{item.quantity} - {item.price.toLocaleString()}đ
+                      </p>
+                    </div>
+                  </div>
+                ))}
+                <div className="pt-4 border-t border-dashed mt-4 flex justify-between items-center font-bold text-lg">
+                  <span>Tổng tiền:</span>
+                  <span className="text-[#F7B5D5]">
+                    {order.totalPrice.toLocaleString()}đ
+                  </span>
+                </div>
               </div>
             </div>
 
-            {/* Nhóm nút điều hướng */}
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link to="/">
-                <button className="flex-1 px-2 py-4 border-2 border-pink-100 text-gray-500 rounded-2xl font-bold hover:bg-gray-50 transition-all hover:cursor-pointer">
-                  Về trang chủ
-                </button>
-              </Link>
-              <Link to="/products">
-                <button className="flex-1 px-2 py-4 bg-[#F7B5D5] text-white rounded-2xl font-bold shadow-lg shadow-pink-100 hover:bg-[#f39cb4] transition-all hover:cursor-pointer">
-                  Tiếp tục mua sắm 🧁
-                </button>
-              </Link>
+            <div className="bg-gray-50 p-6 rounded-2xl h-fit">
+              <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-[#F7B5D5]" /> Địa chỉ nhận hàng
+              </h3>
+              <div className="space-y-2 text-sm text-gray-600">
+                <p>
+                  <span className="font-bold">Người nhận:</span>{" "}
+                  {order.shippingAddress.recipientName}
+                </p>
+                <p>
+                  <span className="font-bold">SĐT:</span>{" "}
+                  {order.shippingAddress.phone}
+                </p>
+                <p>
+                  <span className="font-bold">Địa chỉ:</span>{" "}
+                  {order.shippingAddress.address}, {order.shippingAddress.city}
+                </p>
+              </div>
             </div>
           </div>
         </div>
