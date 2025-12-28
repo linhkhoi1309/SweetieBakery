@@ -1,9 +1,12 @@
 import { ArrowRight, Sparkles } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 import { Badge } from "../../../components/ui/Badge";
 import { Button } from "../../../components/ui/Button";
 
 const HeroSection = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="bg-linear-to-br from-[#F7B5D5]/20 via-white to-[#FFF0D9]/30 py-20">
       <div className="container mx-auto px-4">
@@ -28,7 +31,7 @@ const HeroSection = () => {
             <Button
               size="lg"
               className="bg-[#F7B5D5] hover:bg-[#F7B5D5]/90 hover:cursor-pointer"
-              onClick={() => (window.location.href = "/products")}
+              onClick={() => navigate("/products")}
             >
               Đặt hàng ngay
               <ArrowRight className="ml-2 h-5 w-5" />
@@ -36,7 +39,7 @@ const HeroSection = () => {
             <Button
               size="lg"
               variant="outline"
-              onClick={() => (window.location.href = "/about")}
+              onClick={() => navigate("/about")}
               className="hover:cursor-pointer hover:bg-gray-100"
             >
               Tìm hiểu thêm
