@@ -5,14 +5,16 @@ export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState(() => {
-    const saved = localStorage.getItem("cart");
+    //const saved = localStorage.getItem("cart");
+    const saved = sessionStorage.getItem("cart");
     return saved ? JSON.parse(saved) : [];
   });
   const [appliedVoucher, setAppliedVoucher] = useState(null);
 
   // Lưu giỏ hàng vào LocalStorage mỗi khi có thay đổi
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cart));
+    //localStorage.setItem("cart", JSON.stringify(cart));
+    sessionStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
   const addToCart = (product, qty = 1) => {
@@ -64,7 +66,8 @@ export const CartProvider = ({ children }) => {
   const clearCart = () => {
     setCart([]);
     setAppliedVoucher(null);
-    localStorage.removeItem("cart");
+    //localStorage.removeItem("cart");
+    sessionStorage.removeItem("cart");
   };
 
   // 1. Tính tổng số lượng sản phẩm

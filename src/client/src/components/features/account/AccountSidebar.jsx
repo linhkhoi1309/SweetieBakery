@@ -10,7 +10,8 @@ const AccountSidebar = ({ user, navigate, onProfileUpdate }) => {
   const fileInputRef = useRef(null);
 
   const handleLogout = () => {
-    localStorage.clear();
+    //localStorage.clear();
+    sessionStorage.clear();
     window.location.href = "/";
   };
 
