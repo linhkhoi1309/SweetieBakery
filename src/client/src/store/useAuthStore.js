@@ -77,7 +77,7 @@ export const useAuthStore = create((set) => ({
   logout: async () => {
     // Xóa local trước cho nhanh giao diện
     //localStorage.removeItem("token");
-    sessionStorage.setItem("token", res.data.token);
+    sessionStorage.removeItem("token");
     set({ user: null });
 
     toast.success("Hẹn gặp lại bạn sớm!");
