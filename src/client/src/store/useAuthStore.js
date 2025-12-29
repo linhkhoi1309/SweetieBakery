@@ -58,7 +58,8 @@ export const useAuthStore = create((set) => ({
         return;
       }
 
-      localStorage.setItem("token", res.data.token);
+      //localStorage.setItem("token", res.data.token);
+      sessionStorage.setItem("token", res.data.token);
 
       set({ user: res.data.user, isLoggingIn: false });
 
@@ -75,7 +76,8 @@ export const useAuthStore = create((set) => ({
   // --- 3. ĐĂNG XUẤT ---
   logout: async () => {
     // Xóa local trước cho nhanh giao diện
-    localStorage.removeItem("token");
+    //localStorage.removeItem("token");
+    sessionStorage.setItem("token", res.data.token);
     set({ user: null });
 
     toast.success("Hẹn gặp lại bạn sớm!");
@@ -85,7 +87,8 @@ export const useAuthStore = create((set) => ({
   checkAuth: async () => {
     set({ isCheckingAuth: true });
     try {
-      const token = localStorage.getItem("token");
+      //const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
 
       // Nếu không có token, dừng kiểm tra ngay lập tức
       if (!token) {
@@ -105,12 +108,14 @@ export const useAuthStore = create((set) => ({
         set({ user: res.data.user });
       } else {
         // Nếu API trả về không thành công (token hỏng/hết hạn)
-        localStorage.removeItem("token");
+        //localStorage.removeItem("token");
+        sessionStorage.removeItem("token");
         set({ user: null });
       }
     } catch (error) {
       console.error("Phiên đăng nhập hết hạn hoặc lỗi kết nối:", error.message);
-      localStorage.removeItem("token");
+      //localStorage.removeItem("token");
+      sessionStorage.removeItem("token");
       set({ user: null });
     } finally {
       // Phải luôn chuyển về false để AdminRoute ngừng render Loading
@@ -127,7 +132,8 @@ export const useAuthStore = create((set) => ({
       });
 
       // 2. Lưu token vào localStorage
-      localStorage.setItem("token", res.data.token);
+      //localStorage.setItem("token", res.data.token);
+      sessionStorage.setItem("token", res.data.token);
 
       // 3. Cập nhật user vào Store (Đây là lúc user chính thức đăng nhập)
       set({ user: res.data.user, isVerifying: false });

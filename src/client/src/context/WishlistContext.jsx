@@ -8,13 +8,15 @@ export const useWishlist = () => useContext(WishlistContext);
 export const WishlistProvider = ({ children }) => {
   // 1. Khởi tạo state từ LocalStorage
   const [wishlist, setWishlist] = useState(() => {
-    const saved = localStorage.getItem("wishlist");
+    //const saved = localStorage.getItem("wishlist");
+    const saved = sessionStorage.getItem("wishlist");
     return saved ? JSON.parse(saved) : [];
   });
 
   // 2. Lưu vào LocalStorage mỗi khi wishlist thay đổi
   useEffect(() => {
-    localStorage.setItem("wishlist", JSON.stringify(wishlist));
+    //localStorage.setItem("wishlist", JSON.stringify(wishlist));
+    sessionStorage.setItem("wishlist", JSON.stringify(wishlist));
   }, [wishlist]);
 
   // 3. Hàm Toggle: Nếu có rồi thì xóa, chưa có thì thêm
